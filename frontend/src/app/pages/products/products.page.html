@@ -1,0 +1,31 @@
+<h1>Cadastro de Produtos</h1>
+
+<app-products-form></app-products-form>
+
+<hr />
+
+<app-products-list></app-products-list>
+
+<hr />
+
+<button class="teste" (click)="openSale()">Vender</button>
+<button (click)="openBarcodeReader()">Ler Código de Barras</button>
+
+<!-- Modal de venda -->
+<app-sale-modal
+  *ngIf="showSaleModal"
+  (close)="closeSale()">
+</app-sale-modal>
+
+<!-- Modal de leitura de código de barras -->
+<app-barcode-reader
+  *ngIf="showBarcodeReader"
+  (scanned)="onBarcodeScanned($event)">
+</app-barcode-reader>
+
+<!-- Modal de informações do produto -->
+<app-product-info-modal
+  *ngIf="showProductInfoModal"
+  [product]="scannedProduct"
+  (close)="closeProductInfoModal()">
+</app-product-info-modal>

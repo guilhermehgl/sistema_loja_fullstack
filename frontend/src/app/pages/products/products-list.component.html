@@ -1,0 +1,50 @@
+<h3>Produtos Cadastrados</h3>
+
+<!-- CONTROLES -->
+<div style="margin-bottom: 16px; display: flex; gap: 12px; flex-wrap: wrap; align-items: center;">
+
+  <!-- Busca -->
+  <input type="text" placeholder="Pesquisar produto..." [(ngModel)]="searchTerm"
+    (ngModelChange)="currentPage = 1; applyFilters()" />
+
+  <!-- Quantidade por página -->
+  <select [ngModel]="pageSize" (ngModelChange)="pageSize = +$event; currentPage = 1; applyFilters()">
+
+    <option value="1">1</option>
+    <option value="3">3</option>
+    <option value="5">5</option>
+  </select>
+
+  <!-- Ordenação -->
+  <select [(ngModel)]="sortBy" (change)="currentPage = 1; applyFilters()">
+    <option value="barcode">Código de barras</option>
+    <option value="name">Nome do produto</option>
+  </select>
+
+</div>
+
+<hr />
+
+<!-- LISTA -->
+<div *ngFor="let product of filteredProducts">
+  <strong>{{ product.name }}</strong><br />
+  Código: {{ product.barcode }}<br />
+  Quantidade: {{ product.quantity }}<br />
+  Preço: R$ {{ product.price | number:'1.2-2' }}
+  <hr />
+</div>
+
+<!-- PAGINAÇÃO -->
+<div style="display: flex; gap: 12px; align-items: center; margin-top: 12px;">
+  <button (click)="previousPage()" [disabled]="currentPage === 1">
+    ⬅ Página anterior
+  </button>
+
+  <span>
+    Página {{ currentPage }} de {{ totalPages }}
+  </span>
+
+  <button (click)="nextPage()" [disabled]="currentPage === totalPages">
+    Próxima página ➡
+  </button>
+</div>

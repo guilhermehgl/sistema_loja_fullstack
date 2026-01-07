@@ -1,0 +1,12 @@
+<div class="overlay">
+  <div class="modal" *ngIf="product">
+    <h2>Informações do Produto</h2>
+
+    <p><strong>Nome:</strong> {{ product.name }}</p>
+    <p><strong>Código de barras:</strong> {{ product.barcode }}</p>
+    <p><strong>Preço:</strong> R$ {{ product.price | number:'1.2-2' }}</p>
+    <p><strong>Estoque:</strong> {{ product.quantity }}</p>
+
+    <button (click)="close.emit()">OK</button>
+  </div>
+</div>

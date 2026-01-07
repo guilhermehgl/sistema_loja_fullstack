@@ -1,0 +1,25 @@
+<div class="overlay">
+
+  <div class="modal">
+
+  <label>Selecionar câmera:</label>
+
+  <select
+    *ngIf="cameras.length > 0"
+    (change)="onDeviceSelect($event.target)">
+    <option
+      *ngFor="let cam of cameras"
+      [value]="cam.deviceId">
+      {{ cam.label || 'Câmera' }}
+    </option>
+  </select>
+
+  <zxing-scanner
+    [device]="currentDevice"
+    [formats]="allowedFormats"
+    [tryHarder]="true"
+    (camerasFound)="onCamerasFound($event)"
+    (scanSuccess)="onCodeResult($event)">
+  </zxing-scanner>
+</div>
+</div>
