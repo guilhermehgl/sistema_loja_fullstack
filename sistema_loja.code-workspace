@@ -1,0 +1,12 @@
+{
+  "folders": [
+    {
+      "name": "Backend (NestJS)",
+      "path": "backend"
+    },
+    {
+      "name": "Frontend (Angular)",
+      "path": "frontend"
+    }
+  ]
+}
