@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, Patch, Param } from '@nestjs/common';
+import { Body, Controller, Get, Post, Patch, Param, Delete } from '@nestjs/common';
 import { ProductsService } from './products.service';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdatePriceDto } from "./dto/update-price.dto"
@@ -17,6 +17,14 @@ export class ProductsController {
   findAll() {
     return this.service.findAll();
   }
+
+  @Delete(':id')
+deleteProduct(
+  @Param('id') id: string,
+  @Body('adminPassword') adminPassword: string,
+) {
+  return this.service.delete(id, adminPassword);
+}
 
   @Patch(':id/price')
 updatePrice(

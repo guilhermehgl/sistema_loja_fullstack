@@ -43,4 +43,13 @@ export class ProductsService {
       product => product.barcode === barcode
     );
   }
+deleteProduct(productId: string, adminPassword: string) {
+  return this.http.delete(
+    `http://localhost:3000/products/${productId}`,
+    {
+      body: { adminPassword }
+    }
+  );
+}
+
 }

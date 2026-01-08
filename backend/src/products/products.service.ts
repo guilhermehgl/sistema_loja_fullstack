@@ -1,4 +1,4 @@
-import { Injectable, ConflictException } from '@nestjs/common';
+import { Injectable, ConflictException, ForbiddenException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Product } from './products.entity';
@@ -8,43 +8,53 @@ import { CreateProductDto } from './dto/create-product.dto';
 export class ProductsService {
   constructor(
     @InjectRepository(Product)
-    private readonly repo: Repository<Product>,
+    private readonly repository: Repository<Product>,
   ) {}
 
-async create(dto: CreateProductDto) {
-  const product = await this.repo.findOne({
-    where: { barcode: dto.barcode },
-  });
+  async create(dto: CreateProductDto) {
+    const product = await this.repository.findOne({
+      where: { barcode: dto.barcode },
+    });
 
-  // Se já existir, soma a quantidade
-  if (product) {
-    product.quantity += dto.quantity;
+    // Se já existir, soma a quantidade
+    if (product) {
+      product.quantity += dto.quantity;
 
-    // Atualiza o preço se vier diferente
-    if (dto.price !== product.price) {
-      product.price = dto.price;
+      // Atualiza o preço se vier diferente
+      if (dto.price !== product.price) {
+        product.price = dto.price;
+      }
+
+      return this.repository.save(product);
     }
 
-    return this.repo.save(product);
+    // Se não existir, cria novo
+    const newProduct = this.repository.create(dto);
+    return this.repository.save(newProduct);
   }
 
-  // Se não existir, cria novo
-  const newProduct = this.repo.create(dto);
-  return this.repo.save(newProduct);
-}
+  async updatePrice(id: string, price: number) {
+    const product = await this.repository.findOneBy({ id });
 
-async updatePrice(id: string, price: number) {
-  const product = await this.repo.findOneBy({ id });
+    if (!product) {
+      throw new Error('Produto não encontrado');
+    }
 
-  if (!product) {
-    throw new Error('Estoque insuficiente');
+    product.price = price;
+    return this.repository.save(product);
   }
-
-  product.price = price;
-  return this.repo.save(product);
-}
 
   findAll() {
-    return this.repo.find();
+    return this.repository.find();
+  }
+
+  delete(id: string, adminPassword: string) {
+    const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD;
+
+    if (adminPassword !== ADMIN_PASSWORD) {
+      throw new ForbiddenException('Senha de administrador inválida');
+    }
+
+    return this.repository.delete(id);
   }
 }

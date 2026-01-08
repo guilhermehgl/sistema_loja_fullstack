@@ -25,14 +25,36 @@ export class ProductsListComponent implements OnInit {
 
   // 📄 paginação
   currentPage: number = 1;
-  totalPages: number = 1;
+  totalPages: number = 1; 
 
   constructor(
     private service: ProductsService,
     private cdr: ChangeDetectorRef
   ) { }
 
+  onDelete(productId: string) {
+    const password = prompt('Digite a senha do administrador:');
 
+    if (!password) return;
+
+    this.service.deleteProduct(productId, password).subscribe({
+      next: () => {
+        alert('Produto deletado com sucesso');
+      },
+      error: () => {
+        alert('Senha inválida ou erro ao deletar');
+      },
+    });
+  }
+
+  onEdit(product: Product) {
+    const password = prompt('Digite a senha do administrador:');
+
+    if (!password) return;
+
+    // aqui você pode abrir um modal de edição
+    console.log('Senha validada, pode editar', product);
+  }
 
   ngOnInit() {
     this.service.products$.subscribe(data => {
@@ -49,41 +71,41 @@ export class ProductsListComponent implements OnInit {
     this.filteredProducts = this.processedProducts.slice(startIndex, endIndex);
   }
 
-applyFilters() {
-  const pageSize = Number(this.pageSize);
+  applyFilters() {
+    const pageSize = Number(this.pageSize);
 
-  let result = [...this.products];
+    let result = [...this.products];
 
-  if (this.searchTerm) {
-    const term = this.searchTerm.toLowerCase();
-    result = result.filter(product =>
-      product.name.toLowerCase().includes(term) ||
-      product.barcode.toString().includes(term)
+    if (this.searchTerm) {
+      const term = this.searchTerm.toLowerCase();
+      result = result.filter(product =>
+        product.name.toLowerCase().includes(term) ||
+        product.barcode.toString().includes(term)
+      );
+    }
+
+    if (this.sortBy === 'barcode') {
+      result.sort((a, b) => Number(a.barcode) - Number(b.barcode));
+    } else {
+      result.sort((a, b) => a.name.localeCompare(b.name));
+    }
+
+    this.processedProducts = result;
+
+    this.totalPages = Math.max(
+      1,
+      Math.ceil(this.processedProducts.length / pageSize)
     );
+
+    if (this.currentPage > this.totalPages) {
+      this.currentPage = 1;
+    }
+
+    const startIndex = (this.currentPage - 1) * pageSize;
+    const endIndex = startIndex + pageSize;
+
+    this.filteredProducts = this.processedProducts.slice(startIndex, endIndex);
   }
-
-  if (this.sortBy === 'barcode') {
-    result.sort((a, b) => Number(a.barcode) - Number(b.barcode));
-  } else {
-    result.sort((a, b) => a.name.localeCompare(b.name));
-  }
-
-  this.processedProducts = result;
-
-  this.totalPages = Math.max(
-    1,
-    Math.ceil(this.processedProducts.length / pageSize)
-  );
-
-  if (this.currentPage > this.totalPages) {
-    this.currentPage = 1;
-  }
-
-  const startIndex = (this.currentPage - 1) * pageSize;
-  const endIndex = startIndex + pageSize;
-
-  this.filteredProducts = this.processedProducts.slice(startIndex, endIndex);
-}
 
 
   nextPage() {
@@ -98,5 +120,8 @@ applyFilters() {
       this.currentPage--;
       this.updatePagedProducts();
     }
+
+
   }
 }
+

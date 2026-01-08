@@ -30,7 +30,11 @@
   <strong>{{ product.name }}</strong><br />
   Código: {{ product.barcode }}<br />
   Quantidade: {{ product.quantity }}<br />
-  Preço: R$ {{ product.price | number:'1.2-2' }}
+  Preço: R$ {{ product.price | number:'1.2-2' }} <br />
+
+  <button (click)="onEdit(product)">✏️ Editar</button>
+  <button (click)="onDelete(product.id)">🗑️ Deletar</button>
+
   <hr />
 </div>
 
