@@ -9,7 +9,7 @@ export class ProductsService {
   constructor(
     @InjectRepository(Product)
     private readonly repository: Repository<Product>,
-  ) {}
+  ) { }
 
   async create(dto: CreateProductDto) {
     const product = await this.repository.findOne({
@@ -48,6 +48,19 @@ export class ProductsService {
     return this.repository.find();
   }
 
+  async updateProduct(id: string, dto: Partial<CreateProductDto>) {
+    const product = await this.repository.findOneBy({ id });
+    if (!product) throw new Error('Produto não encontrado');
+
+    // Atualiza campos
+    product.name = dto.name ?? product.name;
+    product.barcode = dto.barcode ?? product.barcode;
+    product.quantity = dto.quantity ?? product.quantity;
+    product.price = dto.price ?? product.price;
+
+    return this.repository.save(product);
+  }
+
   delete(id: string, adminPassword: string) {
     const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD;
 
@@ -57,4 +70,5 @@ export class ProductsService {
 
     return this.repository.delete(id);
   }
+
 }
