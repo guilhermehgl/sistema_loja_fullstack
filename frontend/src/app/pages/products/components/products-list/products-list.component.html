@@ -1,0 +1,61 @@
+<h3>Produtos Cadastrados</h3>
+
+<!-- CONTROLES -->
+<div style="margin-bottom: 16px; display: flex; gap: 12px; flex-wrap: wrap; align-items: center;">
+  <input type="text" placeholder="Pesquisar produto..." [(ngModel)]="searchTerm" (ngModelChange)="currentPage = 1; applyFilters()" />
+  <select [ngModel]="pageSize" (ngModelChange)="pageSize = +$event; currentPage = 1; applyFilters()">
+    <option value="20">20</option>
+    <option value="50">50</option>
+    <option value="100">100</option>
+  </select>
+  <select [(ngModel)]="sortBy" (change)="currentPage = 1; applyFilters()">
+    <option value="barcode">Código de barras</option>
+    <option value="name">Nome do produto</option>
+  </select>
+</div>
+
+<hr />
+
+<!-- LISTA -->
+<div *ngFor="let product of filteredProducts">
+  <strong>{{ product.name }}</strong><br />
+  Código: {{ product.barcode }}<br />
+  Quantidade: {{ product.quantity }}<br />
+  Preço: R$ {{ product.price | number:'1.2-2' }} <br />
+
+  <button (click)="openConfirmModal(product, 'edit')">✏️ Editar</button>
+  <button (click)="openConfirmModal(product, 'delete')">🗑️ Deletar</button>
+
+  <hr />
+</div>
+
+<!-- MODAIS -->
+<app-confirm-modal
+  *ngIf="showConfirmModal"
+  title="Confirmação de administrador"
+  message="Digite a senha do administrador"
+  inputType="password"
+  (confirm)="confirmActionPassword($event)"
+  (cancel)="showConfirmModal = false">
+</app-confirm-modal>
+
+<app-edit-product-modal
+  *ngIf="showEditModal && productTarget"
+  [product]="productTarget"
+  [existingBarcodes]="allBarcodes"  (save)="updateProduct($event)"
+  (cancel)="showEditModal = false">
+</app-edit-product-modal>
+
+<app-alert-modal
+  *ngIf="showAlertModal"
+  title="Aviso"
+  [message]="alertMessage"
+  (close)="showAlertModal = false">
+</app-alert-modal>
+
+<!-- PAGINAÇÃO -->
+<div style="display: flex; gap: 12px; align-items: center; margin-top: 12px;">
+  <button (click)="previousPage()" [disabled]="currentPage === 1">⬅ Página anterior</button>
+  <span>Página {{ currentPage }} de {{ totalPages }}</span>
+  <button (click)="nextPage()" [disabled]="currentPage === totalPages">Próxima página ➡</button>
+</div>

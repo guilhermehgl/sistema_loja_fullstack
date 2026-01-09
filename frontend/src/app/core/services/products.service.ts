@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { BehaviorSubject } from 'rxjs';
-import { tap } from 'rxjs/operators';
+import { BehaviorSubject, map, tap } from 'rxjs';
 
 export interface Product {
   id: string;
@@ -10,6 +9,7 @@ export interface Product {
   quantity: number;
   price: number;
 }
+
 @Injectable({
   providedIn: 'root',
 })
@@ -23,33 +23,44 @@ export class ProductsService {
     this.load();
   }
 
+  /** Carrega todos os produtos e atualiza o BehaviorSubject */
   load() {
-    this.http
-      .get<Product[]>(this.API)
+    this.http.get<Product[]>(this.API)
       .subscribe(data => this._products$.next(data));
   }
 
+  /** Cria um novo produto */
   create(product: Partial<Product>) {
     return this.http.post<Product>(this.API, product).pipe(
       tap(() => this.load())
     );
   }
 
-  // ✅ AQUI está a correção
-  existsByBarcode(barcode: string): boolean {
-    if (!barcode) return false;
-
-    return this._products$.value.some(
-      product => product.barcode === barcode
+  /** Deleta um produto enviando senha de admin */
+  handleProduct(productId: string, adminPassword: string) {
+    return this.http.delete(`${this.API}/${productId}`, {
+      body: { adminPassword }
+    }).pipe(
+      tap(() => this.load())
     );
   }
-deleteProduct(productId: string, adminPassword: string) {
-  return this.http.delete(
-    `http://localhost:3000/products/${productId}`,
-    {
-      body: { adminPassword }
-    }
-  );
-}
 
+  /** Verifica se existe produto com o mesmo barcode */
+  existsByBarcode(barcode: string): boolean {
+    if (!barcode) return false;
+    return this._products$.value.some(p => p.barcode === barcode);
+  }
+
+  /** Valida a senha de administrador via backend */
+  validateAdminPassword(password: string) {
+    return this.http.post<{ valid: boolean }>(`${this.API}/validate-password`, { password })
+      .pipe(
+        map(res => res.valid)
+      );
+  }
+
+  updateProduct(product: Product) {
+    return this.http.patch<Product>(`${this.API}/${product.id}`, product)
+      .pipe(tap(() => this.load()));
+  }
 }

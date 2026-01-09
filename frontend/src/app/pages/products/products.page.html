@@ -8,14 +8,8 @@
 
 <hr />
 
-<button class="teste" (click)="openSale()">Vender</button>
-<button (click)="openBarcodeReader()">Ler Código de Barras</button>
 
-<!-- Modal de venda -->
-<app-sale-modal
-  *ngIf="showSaleModal"
-  (close)="closeSale()">
-</app-sale-modal>
+<button (click)="openBarcodeReader()">Ler Código de Barras</button>
 
 <!-- Modal de leitura de código de barras -->
 <app-barcode-reader
@@ -23,9 +17,4 @@
   (scanned)="onBarcodeScanned($event)">
 </app-barcode-reader>
 
-<!-- Modal de informações do produto -->
-<app-product-info-modal
-  *ngIf="showProductInfoModal"
-  [product]="scannedProduct"
-  (close)="closeProductInfoModal()">
-</app-product-info-modal>
+

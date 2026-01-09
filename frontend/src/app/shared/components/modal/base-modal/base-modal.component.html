@@ -1,0 +1,17 @@
+<div class="backdrop">
+  <div class="modal">
+    <header class="modal-header">
+      <h3>{{ title }}</h3>
+    </header>
+
+    <section class="modal-content">
+      <ng-content></ng-content>
+    </section>
+
+    <footer class="modal-actions">
+      <button *ngIf="showCancel" type="button" class="btn secondary" (click)="onCancel()" (keydown.enter)="onCancel()" tabindex="0">
+        Cancelar
+      </button>
+    </footer>
+  </div>
+</div>

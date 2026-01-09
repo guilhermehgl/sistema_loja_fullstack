@@ -1,0 +1,31 @@
+.backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: auto;
+  z-index: 9999;
+}
+
+.modal {
+  background: white;
+  padding: 16px;
+  border-radius: 8px;
+  position: relative;
+  z-index: 10000;
+  pointer-events: auto;
+}
+
+.modal-actions {
+  margin-top: 12px;
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+
+.hidden {
+  display: none;
+}

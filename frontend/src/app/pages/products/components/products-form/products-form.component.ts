@@ -1,14 +1,7 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import {
-  FormBuilder,
-  FormGroup,
-  Validators,
-  ReactiveFormsModule,
-  AbstractControl,
-  ValidationErrors,
-} from '@angular/forms';
-import { ProductsService } from '../../core/services/products.service';
+import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, AbstractControl, ValidationErrors } from '@angular/forms';
+import { ProductsService } from '../../../../core/services/products.service';
 
 type ProductFormControls = {
   name: AbstractControl;
