@@ -1,0 +1,71 @@
+<div class="modal-backdrop">
+  <div class="modal">
+
+    <!-- HEADER -->
+    <div class="modal-header">
+      <h2>Venda</h2>
+      <button (click)="close.emit()">×</button>
+    </div>
+
+    <!-- BUSCA -->
+    <input class="search-input" [(ngModel)]="search" (input)="filter()" placeholder="Buscar produto..." />
+
+    <!-- LISTA DE PRODUTOS -->
+    <div class="product-list">
+      <div class="product-item" *ngFor="let p of visibleProducts">
+        <span>
+          {{ p.name }} - R$ {{ p.price | number:'1.2-2' }}
+        </span>
+
+        <button (click)="add(p)" [disabled]="!canAddProduct(p) || p.quantity <= 0">
+          Adicionar
+        </button>
+
+      </div>
+    </div>
+
+    <!-- CARRINHO -->
+    <div class="cart" *ngIf="cart.length">
+
+      <div *ngFor="let item of cart">
+
+        <div class="cart-item">
+          <span>{{ item.name }}</span>
+
+          <div class="qty">
+            <button (click)="dec(item)">-</button>
+            <input type="number" [value]="item.quantity" (input)="onQuantityInput($event, item)"
+              (blur)="onQuantityBlur(item)" (keydown)="blockInvalidKeys($event)" />
+
+
+
+            <button (click)="inc(item)" [disabled]="!canIncrease(item)">
+              +
+            </button>
+          </div>
+        </div>
+
+        <!-- MENSAGEM DE LIMITE (PRECISA ESTAR DENTRO DO *ngFor) -->
+        <div class="error" *ngIf="item.quantity >= item.stock">
+          Limite de estoque atingido
+        </div>
+
+      </div>
+
+      <!-- TOTAL (DENTRO DO CARRINHO) -->
+      <div class="total">
+        Total: R$ {{ total | number:'1.2-2' }}
+      </div>
+
+    </div>
+
+    <!-- FOOTER (DENTRO DA MODAL) -->
+    <div class="modal-footer">
+      <button class="cancel" (click)="close.emit()">Cancelar</button>
+      <button class="confirm" (click)="finalize()" [disabled]="loading || !cart.length">
+        {{ loading ? 'Vendendo...' : 'Finalizar venda' }}
+      </button>
+    </div>
+
+  </div>
+</div>

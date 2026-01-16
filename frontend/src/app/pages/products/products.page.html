@@ -7,14 +7,4 @@
 <app-products-list></app-products-list>
 
 <hr />
-
-
-<button (click)="openBarcodeReader()">Ler Código de Barras</button>
-
-<!-- Modal de leitura de código de barras -->
-<app-barcode-reader
-  *ngIf="showBarcodeReader"
-  (scanned)="onBarcodeScanned($event)">
-</app-barcode-reader>
-
-
+<app-products-sale>Botao</app-products-sale>
