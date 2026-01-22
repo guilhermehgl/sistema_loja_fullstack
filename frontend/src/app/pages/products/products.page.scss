@@ -1,9 +1,13 @@
-app-products-form {
-    display: block;
-    padding: 40px;
-    background-color: aqua;
+.titulo-container {
+    display: grid;
+    place-items: center;
+    margin: 20px;
 }
 
-h1 {
-    background-color: aqua;
+.titulo {
+    border-bottom: 3px groove #E5E7EB;
+    width: 500px;
+    text-align: center;
+    font-weight: 800;
+    color: #E5E7EB;
 }

@@ -1,50 +1,59 @@
-<form [formGroup]="form" (ngSubmit)="save()">
+<div class="container-form">
+  <form class="form" [formGroup]="form" (ngSubmit)="save()">
 
-  <!-- Nome -->
-  <input type="text" formControlName="name" placeholder="Nome do produto" />
+    <!-- Nome -->
+    <div class="input-container">
+      <input type="text" formControlName="name" placeholder="Nome do produto" />
 
-  <small *ngIf="hasError('name', 'minlength')">
-    Nome deve ter no mínimo 4 caracteres
-  </small>
+      <small *ngIf="hasError('name', 'minlength')">
+        Nome deve ter no mínimo 4 caracteres
+      </small>
 
-  <small *ngIf="hasError('name', 'maxlength')">
-    Nome deve ter no máximo 30 caracteres
-  </small>
+      <small *ngIf="hasError('name', 'maxlength')">
+        Nome deve ter no máximo 30 caracteres
+      </small>
 
-  <small *ngIf="formHasError('nameRequired')">
-    Nome é obrigatório para código novo
-  </small>
+      <small *ngIf="formHasError('nameRequired')">
+        Nome é obrigatório para código novo
+      </small>
+    </div>
 
-  <!-- Código -->
-  <input type="text" formControlName="barcode" placeholder="Código (8 dígitos)" maxlength="8" inputmode="numeric"
-    (input)="onlyNumbers($event, 8)" />
+    <!-- Código -->
+    <div class="input-container">
+      <input type="text" formControlName="barcode" placeholder="Código (8 dígitos)" maxlength="8" inputmode="numeric"
+        (input)="onlyNumbers($event, 8)" />
 
-  <small *ngIf="f['barcode'].touched && f['barcode'].errors">
-    Código deve conter exatamente 8 números
-  </small>
+      <small *ngIf="f['barcode'].touched && f['barcode'].errors">
+        Código deve conter exatamente 8 números
+      </small>
+    </div>
 
-  <!-- Quantidade -->
-  <input type="text" formControlName="quantity" placeholder="Quantidade" maxlength="6" inputmode="numeric"
-    (input)="quantityMask($event)" />
+    <!-- Quantidade -->
+    <div class="input-container">
+      <input type="text" formControlName="quantity" placeholder="Quantidade" maxlength="6" inputmode="numeric"
+        (input)="quantityMask($event)" />
 
-  <small *ngIf="f['quantity'].touched && f['quantity'].errors">
-    Quantidade deve ter até 6 dígitos
-  </small>
-
-
-
-  <!-- Preço -->
-  <input type="text" formControlName="price" placeholder="Preço (ex: 10,50)" (input)="priceMask($event)"
-    (blur)="normalizePrice()" />
-
-  <small *ngIf="f['price'].touched && f['price'].errors">
-    Preço inválido
-  </small>
+      <small *ngIf="f['quantity'].touched && f['quantity'].errors">
+        Quantidade deve ter até 6 dígitos
+      </small>
+    </div>
 
 
-  <button type="submit" [disabled]="form.invalid">
-    Salvar
-  </button>
 
-</form>
+    <!-- Preço -->
+    <div class="input-container">
+      <input type="text" formControlName="price" placeholder="Preço (ex: 10,50)" (input)="priceMask($event)"
+        (blur)="normalizePrice()" />
 
+      <small *ngIf="f['price'].touched && f['price'].errors">
+        Preço inválido
+      </small>
+    </div>
+
+
+    <button class="salvar" type="submit" [disabled]="form.invalid">
+      Salvar
+    </button>
+
+  </form>
+</div>

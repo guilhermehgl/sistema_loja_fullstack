@@ -1,0 +1,71 @@
+.form {
+    display: flex;
+    background-color: #0F172A;
+    padding: 30px;
+    margin: 30px;
+    border-radius: 20px;
+    justify-content: center;
+    box-shadow: 10px 10px 5px rgba($color: white, $alpha: 0.3);
+    animation-name: teste;
+    animation-duration: 1s;
+    animation-iteration-count: 1;
+}
+
+small {
+    color: #E5E7EB;
+    border-bottom: 2px solid #E5E7EB;
+    margin: 0 10px;
+}
+
+.input-container {
+    display: flex;
+    flex-direction: column;
+    margin: 0 20px;
+}
+
+.input-container>input {
+    width: 300px;
+    height: 30px;
+    border-radius: 5px;
+    outline: none;
+    border: none;
+    padding-left: 15px;
+    transition: 0.5s;
+    margin-bottom: 8px;
+    font-weight: 500;
+}
+
+.input-container>input:focus {
+    border: 2px solid rgb(203, 206, 252);
+    transform: scale(1.05);
+}
+
+.salvar {
+    height: 30px;
+    width: 100px;
+    border-radius: 5px;
+    outline: none;
+    background-color: #38BDF8;
+    font-weight: 600;
+    cursor: pointer;
+    outline: none;
+    border: none;
+    transition: 1s;
+}
+
+.salvar:hover {
+    transform: scale(1.08);
+    background-color: rgb(115, 223, 120);
+}
+
+@keyframes teste {
+    0% {
+        margin-left: 300px;
+        opacity: 0;
+    }
+
+    100% {
+        margin-left: 30px;
+        opacity: 1;
+    }
+}

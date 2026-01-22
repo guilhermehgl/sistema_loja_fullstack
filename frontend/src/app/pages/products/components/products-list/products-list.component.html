@@ -17,7 +17,8 @@
 <hr />
 
 <!-- LISTA -->
-<div *ngFor="let product of filteredProducts">
+<div class="container-card">
+  <div class="card-item" *ngFor="let product of filteredProducts">
   <strong>{{ product.name }}</strong><br />
   Código: {{ product.barcode }}<br />
   Quantidade: {{ product.quantity }}<br />
@@ -27,6 +28,7 @@
   <button (click)="openConfirmModal(product, 'delete')">🗑️ Deletar</button>
 
   <hr />
+</div>
 </div>
 
 <!-- MODAIS -->

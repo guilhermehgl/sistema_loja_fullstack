@@ -15,6 +15,7 @@ type ProductFormControls = {
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './products-form.component.html',
+  styleUrls: ['./products-form.component.scss']
 })
 
 export class ProductsFormComponent {
