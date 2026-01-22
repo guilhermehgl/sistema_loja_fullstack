@@ -12,6 +12,7 @@ import { AlertModalComponent } from '../../../../shared/components/modal/alert-m
     CommonModule,
   ],
   templateUrl: './products-sale.component.html',
+  styleUrls: ['./products-sale.component.scss']
 })
 export class ProductsSaleComponent {
   isOpen = false;

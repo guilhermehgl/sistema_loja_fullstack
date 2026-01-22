@@ -1,7 +1,11 @@
 <app-base-modal [title]="title">
-  <p>{{ message }}</p>
+
+  <p class="modal-text">{{ message }}</p>
 
   <div class="modal-actions">
-    <button type="button" class="btn primary" (click)="handleClose()">OK</button>
+    <button type="button" class="btn btn--primary" (click)="handleClose()">
+      OK
+    </button>
   </div>
+
 </app-base-modal>

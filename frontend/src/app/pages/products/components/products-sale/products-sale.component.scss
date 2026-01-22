@@ -1,0 +1,23 @@
+.container-vender {
+    display: grid;
+    place-items: center;
+    margin: 30px 0;
+}
+
+.vender-btn {
+    background-color: #20BF5A;
+    width: 280px;
+    height: 50px;
+    outline: none;
+    font-weight: 900;
+    font-size: 20px;
+    border: none;
+    border-radius: 10px;
+    box-shadow: 6px 6px 5px rgba($color: #20BF5A, $alpha: 0.6);
+    cursor: pointer;
+    transition: 0.5s;
+}
+
+.vender-btn:hover {
+    transform: scale(1.10);
+}

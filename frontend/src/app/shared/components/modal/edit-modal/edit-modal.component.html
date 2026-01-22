@@ -1,65 +1,75 @@
 <app-base-modal [title]="'Editar produto'" (cancel)="handleCancel()">
-  <form [formGroup]="form" class="modal-body">
 
-    <!-- Nome -->
-    <label>Nome</label>
-    <input type="text" formControlName="name" placeholder="Nome do produto" />
-    <small *ngIf="name?.errors?.['required']">Nome é obrigatório</small>
-    <small *ngIf="name?.errors?.['minlength']">Mínimo 4 caracteres</small>
-    <small *ngIf="name?.errors?.['maxlength']">Máximo 30 caracteres</small>
+  <form [formGroup]="form" class="modal-form">
 
-    <!-- Barcode -->
-    <label>Barcode</label>
-    <input
-      type="text"
-      formControlName="barcode"
-      placeholder="12345678"
-      maxlength="8"
-      inputmode="numeric"
-      (keydown)="onNumberInput($event)"
-      (blur)="barcode?.updateValueAndValidity()"
-    />
-<small *ngIf="barcode?.errors?.['pattern'] && (barcode?.dirty || barcode?.touched)" class="text-danger">
-      O código deve ter exatamente 8 números.
-    </small>
-    
-    <small *ngIf="barcode?.errors?.['barcodeExists']" class="text-danger">
-      Este código de barras já existe em outro produto!
-    </small>
+    <div class="modal-field">
+      <label class="modal-label">Nome</label>
+      <input class="modal-input" type="text" formControlName="name" placeholder="Nome do produto" />
+      <small class="modal-error" *ngIf="name?.errors?.['required']">Nome é obrigatório</small>
+      <small class="modal-error" *ngIf="name?.errors?.['minlength']">Mínimo 4 caracteres</small>
+      <small class="modal-error" *ngIf="name?.errors?.['maxlength']">Máximo 30 caracteres</small>
+    </div>
 
-    <!-- Quantidade -->
-    <label>Quantidade</label>
-    <input
-      type="text"
-      formControlName="quantity"
-      maxlength="6"
-      inputmode="numeric"
-      (keydown)="onNumberInput($event)"
-    />
-    <small *ngIf="quantity?.errors?.['required']">Quantidade obrigatória</small>
-    <small *ngIf="quantity?.errors?.['pattern']">Somente números</small>
+    <div class="modal-field">
+      <label class="modal-label">Barcode</label>
+      <input
+        class="modal-input"
+        type="text"
+        formControlName="barcode"
+        placeholder="12345678"
+        maxlength="8"
+        inputmode="numeric"
+        (keydown)="onNumberInput($event)"
+        (blur)="barcode?.updateValueAndValidity()"
+      />
+      <small class="modal-error" *ngIf="barcode?.errors?.['pattern'] && (barcode?.dirty || barcode?.touched)">
+        O código deve ter exatamente 8 números.
+      </small>
+      <small class="modal-error" *ngIf="barcode?.errors?.['barcodeExists']">
+        Este código de barras já existe!
+      </small>
+    </div>
 
-    <!-- Preço -->
-    <label>Preço</label>
-    <input
-      type="text"
-      formControlName="price"
-      placeholder="10,50"
-      (keydown)="onPriceInput($event)"
-    />
-    <small *ngIf="price?.errors?.['required']">Preço obrigatório</small>
-    <small *ngIf="price?.errors?.['pattern']">Formato inválido</small>
+    <div class="modal-field">
+      <label class="modal-label">Quantidade</label>
+      <input
+        class="modal-input"
+        type="text"
+        formControlName="quantity"
+        maxlength="6"
+        inputmode="numeric"
+        (keydown)="onNumberInput($event)"
+      />
+      <small class="modal-error" *ngIf="quantity?.errors?.['required']">Quantidade obrigatória</small>
+      <small class="modal-error" *ngIf="quantity?.errors?.['pattern']">Somente números</small>
+    </div>
+
+    <div class="modal-field">
+      <label class="modal-label">Preço</label>
+      <input
+        class="modal-input"
+        type="text"
+        formControlName="price"
+        placeholder="10,50"
+        (keydown)="onPriceInput($event)"
+      />
+      <small class="modal-error" *ngIf="price?.errors?.['required']">Preço obrigatório</small>
+      <small class="modal-error" *ngIf="price?.errors?.['pattern']">Formato inválido</small>
+    </div>
 
   </form>
 
-<div class="modal-footer">
+  <div class="modal-footer">
     <button 
-        type="button" 
-        class="btn primary" 
-        [disabled]="form.invalid" 
-        (click)="handleSave()">
-        Salvar
+      type="button" 
+      class="btn btn--primary" 
+      [disabled]="form.invalid" 
+      (click)="handleSave()">
+      Salvar
     </button>
-    <button type="button" class="btn secondary" (click)="handleCancel()">Cancelar</button>
+    <button type="button" class="btn btn--secondary" (click)="handleCancel()">
+      Cancelar
+    </button>
   </div>
+
 </app-base-modal>

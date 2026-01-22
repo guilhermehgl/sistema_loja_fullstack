@@ -1,63 +1,53 @@
-<h3>Produtos Cadastrados</h3>
+<div class="list">
+  <div class="list__title">
+    <h3 class="list__title-text">Produtos Cadastrados</h3>
+  </div>
 
-<!-- CONTROLES -->
-<div style="margin-bottom: 16px; display: flex; gap: 12px; flex-wrap: wrap; align-items: center;">
-  <input type="text" placeholder="Pesquisar produto..." [(ngModel)]="searchTerm" (ngModelChange)="currentPage = 1; applyFilters()" />
-  <select [ngModel]="pageSize" (ngModelChange)="pageSize = +$event; currentPage = 1; applyFilters()">
-    <option value="20">20</option>
-    <option value="50">50</option>
-    <option value="100">100</option>
-  </select>
-  <select [(ngModel)]="sortBy" (change)="currentPage = 1; applyFilters()">
-    <option value="barcode">Código de barras</option>
-    <option value="name">Nome do produto</option>
-  </select>
-</div>
+  <div class="list__controls">
+    <input 
+      class="list__input"
+      type="text" 
+      placeholder="Pesquisar produto..." 
+      [(ngModel)]="searchTerm" 
+      (ngModelChange)="currentPage = 1; applyFilters()" 
+    />
 
-<hr />
+    <select class="list__select" [ngModel]="pageSize" (ngModelChange)="pageSize = +$event; currentPage = 1; applyFilters()">
+      <option value="20">20</option>
+      <option value="50">50</option>
+      <option value="100">100</option>
+    </select>
 
-<!-- LISTA -->
-<div class="container-card">
-  <div class="card-item" *ngFor="let product of filteredProducts">
-  <strong>{{ product.name }}</strong><br />
-  Código: {{ product.barcode }}<br />
-  Quantidade: {{ product.quantity }}<br />
-  Preço: R$ {{ product.price | number:'1.2-2' }} <br />
+    <select class="list__select" [(ngModel)]="sortBy" (change)="currentPage = 1; applyFilters()">
+      <option value="barcode">Código de barras</option>
+      <option value="name">Nome do produto</option>
+    </select>
+  </div>
 
-  <button (click)="openConfirmModal(product, 'edit')">✏️ Editar</button>
-  <button (click)="openConfirmModal(product, 'delete')">🗑️ Deletar</button>
+  <div class="list__grid">
+    <div class="card" *ngFor="let product of filteredProducts">
 
-  <hr />
-</div>
-</div>
+      <div class="card__header">
+        <strong class="card__title">{{ product.name }}</strong>
+      </div>
 
-<!-- MODAIS -->
-<app-confirm-modal
-  *ngIf="showConfirmModal"
-  title="Confirmação de administrador"
-  message="Digite a senha do administrador"
-  inputType="password"
-  (confirm)="confirmActionPassword($event)"
-  (cancel)="showConfirmModal = false">
-</app-confirm-modal>
+      <div class="card__body">
+        <span class="card__text">Código: {{ product.barcode }}</span>
+        <span class="card__text">Quantidade: {{ product.quantity }}</span>
+        <span class="card__text">Preço: R$ {{ product.price | number:'1.2-2' }}</span>
+      </div>
 
-<app-edit-product-modal
-  *ngIf="showEditModal && productTarget"
-  [product]="productTarget"
-  [existingBarcodes]="allBarcodes"  (save)="updateProduct($event)"
-  (cancel)="showEditModal = false">
-</app-edit-product-modal>
+      <div class="card__actions">
+        <button class="btn btn--edit" (click)="openConfirmModal(product, 'edit')">✏️ Editar</button>
+        <button class="btn btn--delete" (click)="openConfirmModal(product, 'delete')">🗑️ Deletar</button>
+      </div>
 
-<app-alert-modal
-  *ngIf="showAlertModal"
-  title="Aviso"
-  [message]="alertMessage"
-  (close)="showAlertModal = false">
-</app-alert-modal>
+    </div>
+  </div>
 
-<!-- PAGINAÇÃO -->
-<div style="display: flex; gap: 12px; align-items: center; margin-top: 12px;">
-  <button (click)="previousPage()" [disabled]="currentPage === 1">⬅ Página anterior</button>
-  <span>Página {{ currentPage }} de {{ totalPages }}</span>
-  <button (click)="nextPage()" [disabled]="currentPage === totalPages">Próxima página ➡</button>
+  <div class="pagination">
+    <button class="pagination__btn" (click)="previousPage()" [disabled]="currentPage === 1">⬅ Página anterior</button>
+    <span class="pagination__text">Página {{ currentPage }} de {{ totalPages }}</span>
+    <button class="pagination__btn" (click)="nextPage()" [disabled]="currentPage === totalPages">Próxima página ➡</button>
+  </div>
 </div>

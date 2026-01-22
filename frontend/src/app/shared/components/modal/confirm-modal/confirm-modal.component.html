@@ -1,13 +1,26 @@
 <app-base-modal [title]="title" [showCancel]="true" (cancel)="cancel.emit()">
-  <p>{{ message }}</p>
 
-  <input [type]="inputType" [(ngModel)]="value" (keyup.enter)="handleConfirm()" name="confirmInput" (input)="error = false" autofocus/>
+  <p class="modal-text">{{ message }}</p>
 
-  <p *ngIf="error" class="error">Digite a senha</p>
+  <input 
+    class="modal-input"
+    [type]="inputType" 
+    [(ngModel)]="value" 
+    (keyup.enter)="handleConfirm()" 
+    name="confirmInput" 
+    (input)="error = false" 
+    autofocus 
+  />
+
+  <p *ngIf="error" class="modal-error">Digite a senha</p>
 
   <div class="modal-actions">
-    <button type="button" class="btn primary" (click)="handleConfirm(); $event.stopPropagation()">
+    <button 
+      type="button" 
+      class="btn btn--primary" 
+      (click)="handleConfirm(); $event.stopPropagation()">
       OK
     </button>
   </div>
+
 </app-base-modal>

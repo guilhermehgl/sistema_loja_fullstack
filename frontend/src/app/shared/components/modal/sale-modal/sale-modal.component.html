@@ -1,68 +1,68 @@
 <div class="modal-backdrop">
-  <div class="modal">
+  <div class="modal-box modal-box--large">
 
-    <!-- HEADER -->
-    <div class="modal-header">
-      <h2>Venda</h2>
-      <button (click)="close.emit()">×</button>
+    <div class="modal-box__header">
+      <h2 class="modal-box__title">Venda</h2>
+      <button class="modal-close" (click)="close.emit()">×</button>
     </div>
 
-    <!-- BUSCA -->
-    <input class="search-input" [(ngModel)]="search" (input)="filter()" placeholder="Buscar produto..." />
+    <input 
+      class="modal-input modal-input--search" 
+      [(ngModel)]="search" 
+      (input)="filter()" 
+      placeholder="Buscar produto..." 
+    />
 
-    <!-- LISTA DE PRODUTOS -->
-    <div class="product-list">
-      <div class="product-item" *ngFor="let p of visibleProducts">
-        <span>
+    <div class="sale-list">
+      <div class="sale-item" *ngFor="let p of visibleProducts">
+        <span class="sale-text">
           {{ p.name }} - R$ {{ p.price | number:'1.2-2' }}
         </span>
-
-        <button (click)="add(p)" [disabled]="!canAddProduct(p) || p.quantity <= 0">
+        <button 
+          class="btn btn--primary" 
+          (click)="add(p)" 
+          [disabled]="!canAddProduct(p) || p.quantity <= 0">
           Adicionar
         </button>
-
       </div>
     </div>
 
-    <!-- CARRINHO -->
-    <div class="cart" *ngIf="cart.length">
+    <div class="sale-cart" *ngIf="cart.length">
 
-      <div *ngFor="let item of cart">
+      <div class="sale-cart-item" *ngFor="let item of cart">
 
-        <div class="cart-item">
-          <span>{{ item.name }}</span>
+        <div class="sale-cart-row">
+          <span class="sale-text">{{ item.name }}</span>
 
-          <div class="qty">
-            <button (click)="dec(item)">-</button>
-            <input type="number" [value]="item.quantity" (input)="onQuantityInput($event, item)"
-              (blur)="onQuantityBlur(item)" (keydown)="blockInvalidKeys($event)" />
-
-
-
-            <button (click)="inc(item)" [disabled]="!canIncrease(item)">
-              +
-            </button>
+          <div class="sale-qty">
+            <button class="btn btn--secondary" (click)="dec(item)">-</button>
+            <input 
+              class="modal-input modal-input--qty"
+              type="number" 
+              [value]="item.quantity" 
+              (input)="onQuantityInput($event, item)"
+              (blur)="onQuantityBlur(item)" 
+              (keydown)="blockInvalidKeys($event)" 
+            />
+            <button class="btn btn--secondary" (click)="inc(item)" [disabled]="!canIncrease(item)">+</button>
           </div>
         </div>
 
-        <!-- MENSAGEM DE LIMITE (PRECISA ESTAR DENTRO DO *ngFor) -->
-        <div class="error" *ngIf="item.quantity >= item.stock">
+        <div class="modal-error" *ngIf="item.quantity >= item.stock">
           Limite de estoque atingido
         </div>
 
       </div>
 
-      <!-- TOTAL (DENTRO DO CARRINHO) -->
-      <div class="total">
+      <div class="sale-total">
         Total: R$ {{ total | number:'1.2-2' }}
       </div>
 
     </div>
 
-    <!-- FOOTER (DENTRO DA MODAL) -->
     <div class="modal-footer">
-      <button class="cancel" (click)="close.emit()">Cancelar</button>
-      <button class="confirm" (click)="finalize()" [disabled]="loading || !cart.length">
+      <button class="btn btn--secondary" (click)="close.emit()">Cancelar</button>
+      <button class="btn btn--primary" (click)="finalize()" [disabled]="loading || !cart.length">
         {{ loading ? 'Vendendo...' : 'Finalizar venda' }}
       </button>
     </div>

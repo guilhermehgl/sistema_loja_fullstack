@@ -9,6 +9,7 @@ import { BaseModalComponent } from '../base-modal/base-modal.component';
     standalone: true,
     imports: [CommonModule, FormsModule, ReactiveFormsModule, BaseModalComponent],
     templateUrl: './edit-modal.component.html',
+    styleUrls: ['./edit-modal.component.scss']
 })
 export class EditProductModalComponent implements OnInit {
     @Input() product!: Product;

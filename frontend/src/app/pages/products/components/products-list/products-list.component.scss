@@ -1,10 +1,221 @@
-.container-card {
-    display: flex;
-    flex-direction: column;
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  padding: clamp(16px, 3vw, 28px);
+  background: #0f172a;
+  border-radius: 20px;
+  border: 1px solid #1e293b;
+  margin: 0 40px;
 }
 
-.card-item {
-    background-color: white;
-    width: 200px;
-    margin: 20px;
+/* TÍTULO */
+.list__title {
+  display: flex;
+  align-items: center;
+}
+
+.list__title-text {
+  font-size: 1.3rem;
+  font-weight: 600;
+  color: #f9fafb;
+  letter-spacing: 0.3px;
+}
+
+/* CONTROLES */
+.list__controls {
+  display: grid;
+  grid-template-columns: 1fr auto auto;
+  gap: 12px;
+  align-items: center;
+}
+
+.list__input {
+  height: 40px;
+  border-radius: 12px;
+  border: 1px solid #1e293b;
+  background: #020617;
+  color: #e5e7eb;
+  padding: 0 14px;
+  font-size: 0.95rem;
+  transition: 0.25s ease;
+}
+
+.list__select {
+  height: 40px;
+  border-radius: 12px;
+  border: 1px solid #1e293b;
+  background: #020617;
+  color: #e5e7eb;
+  padding: 0 12px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: 0.25s ease;
+}
+
+.list__input:focus,
+.list__select:focus {
+  border-color: #38bdf8;
+  box-shadow: 0 0 0 2px rgba(56, 189, 248, 0.15);
+  transform: translateY(-1px);
+}
+
+/* GRID DE CARDS */
+.list__grid {
+  display: grid;
+  gap: 14px;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+}
+
+/* CARD */
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  background: linear-gradient(180deg, #020617, #020617);
+  border: 1px solid #1e293b;
+  border-radius: 16px;
+  padding: 16px;
+  transition: 0.25s ease;
+}
+
+.card:hover {
+  transform: translateY(-4px);
+  border-color: #38bdf8;
+  box-shadow: 0 12px 28px rgba(56, 189, 248, 0.12);
+}
+
+.card__header {
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: #facc15;
+}
+
+.card__body {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 0.9rem;
+  color: #cbd5e1;
+}
+
+.card__text {
+  color: inherit;
+}
+
+.card__actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 6px;
+}
+
+/* BOTÕES */
+.btn {
+  padding: 7px 14px;
+  border-radius: 10px;
+  border: none;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.btn--edit {
+  background: #0ea5e9;
+  color: #020617;
+}
+
+.btn--edit:hover {
+  background: #38bdf8;
+}
+
+.btn--delete {
+  background: #ef4444;
+  color: #020617;
+}
+
+.btn--delete:hover {
+  background: #f87171;
+}
+
+/* PAGINAÇÃO */
+.pagination {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  padding-top: 6px;
+  flex-wrap: wrap;
+}
+
+.pagination__text {
+  font-size: 0.85rem;
+  color: #94a3b8;
+}
+
+.pagination__btn {
+  padding: 7px 14px;
+  border-radius: 10px;
+  border: 1px solid #1e293b;
+  background: #020617;
+  color: #e5e7eb;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.pagination__btn:hover:not(:disabled) {
+  border-color: #38bdf8;
+  color: #38bdf8;
+}
+
+.pagination__btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* ========================== */
+/* 📱 RESPONSIVIDADE */
+/* ========================== */
+
+/* tablet */
+@media (max-width: 900px) {
+  .list__controls {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .list__input {
+    grid-column: span 2;
+  }
+
+  .pagination {
+    justify-content: center;
+  }
+}
+
+/* celular */
+@media (max-width: 600px) {
+  .list__controls {
+    grid-template-columns: 1fr;
+  }
+
+  .list {
+    margin: 0 20px;
+  }
+
+  .card__actions {
+    flex-direction: column;
+  }
+
+  .btn {
+    width: 100%;
+  }
+
+  .pagination {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .pagination__btn {
+    width: 100%;
+  }
 }
