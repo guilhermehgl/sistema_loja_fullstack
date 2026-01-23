@@ -1,23 +1,98 @@
+/* =========================================================
+   BOTÃO VENDER - PREMIUM MODERNO
+========================================================= */
+
 .container-vender {
-    display: grid;
-    place-items: center;
-    margin: 30px 0;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 4rem 0 2rem;
+}
+
+/* BOTÃO PRINCIPAL */
+.vender-btn {
+  position: relative;
+  padding: 1.1rem 3.6rem;
+  border-radius: 999px;
+  border: 1px solid var(--primary-700);
+
+  font-size: 1.25rem;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+
+  color: var(--text-primary);
+  background: linear-gradient(
+    135deg,
+    var(--primary-600),
+    var(--primary-700)
+  );
+
+  cursor: pointer;
+  transition: var(--transition-base);
+  box-shadow:
+    0 10px 30px rgba(14, 165, 233, 0.25),
+    inset 0 0 0 rgba(255, 255, 255, 0);
+
+  overflow: hidden;
+}
+
+/* EFEITO GLOW */
+.vender-btn::before {
+  content: "";
+  position: absolute;
+  inset: -2px;
+  border-radius: inherit;
+  background: linear-gradient(
+    120deg,
+    transparent,
+    var(--primary-500),
+    transparent
+  );
+  opacity: 0;
+  transition: var(--transition-base);
+}
+
+/* HOVER */
+.vender-btn:hover {
+  transform: translateY(-3px) scale(1.02);
+  box-shadow:
+    0 20px 50px rgba(14, 165, 233, 0.45),
+    0 0 30px rgba(56, 189, 248, 0.4);
+}
+
+.vender-btn:hover::before {
+  opacity: 1;
+}
+
+/* CLICK */
+.vender-btn:active {
+  transform: translateY(0) scale(0.98);
+  box-shadow:
+    0 8px 20px rgba(14, 165, 233, 0.3);
 }
 
 .vender-btn {
-    background-color: #20BF5A;
-    width: 280px;
-    height: 50px;
-    outline: none;
-    font-weight: 900;
-    font-size: 20px;
-    border: none;
-    border-radius: 10px;
-    box-shadow: 6px 6px 5px rgba($color: #20BF5A, $alpha: 0.6);
-    cursor: pointer;
-    transition: 0.5s;
+  animation: pulseGlow 3s infinite;
 }
 
-.vender-btn:hover {
-    transform: scale(1.10);
+@keyframes pulseGlow {
+  0%, 100% {
+    box-shadow:
+      0 10px 30px rgba(14, 165, 233, 0.25);
+  }
+  50% {
+    box-shadow:
+      0 15px 45px rgba(56, 189, 248, 0.55);
+  }
+}
+
+
+/* RESPONSIVO */
+@media (max-width: 768px) {
+  .vender-btn {
+    font-size: 1.1rem;
+    padding: 0.95rem 2.8rem;
+  }
 }

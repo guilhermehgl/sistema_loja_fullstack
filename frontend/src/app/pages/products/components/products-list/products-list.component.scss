@@ -1,181 +1,111 @@
 .list {
+  width: 100%;
+  margin-top: 20px;
   display: flex;
   flex-direction: column;
-  gap: 18px;
-  padding: clamp(16px, 3vw, 28px);
-  background: #0f172a;
-  border-radius: 20px;
-  border: 1px solid #1e293b;
-  margin: 0 40px;
+  gap: 14px;
 }
 
 /* TÍTULO */
-.list__title {
-  display: flex;
-  align-items: center;
-}
-
 .list__title-text {
-  font-size: 1.3rem;
+  font-size: 1.15rem;
   font-weight: 600;
-  color: #f9fafb;
-  letter-spacing: 0.3px;
+  color: var(--text-primary);
+  letter-spacing: 0.2px;
 }
 
 /* CONTROLES */
 .list__controls {
   display: grid;
-  grid-template-columns: 1fr auto auto;
+  grid-template-columns: 2fr 1fr 1fr;
   gap: 12px;
-  align-items: center;
-}
-
-.list__input {
-  height: 40px;
-  border-radius: 12px;
-  border: 1px solid #1e293b;
-  background: #020617;
-  color: #e5e7eb;
-  padding: 0 14px;
-  font-size: 0.95rem;
-  transition: 0.25s ease;
-}
-
-.list__select {
-  height: 40px;
-  border-radius: 12px;
-  border: 1px solid #1e293b;
-  background: #020617;
-  color: #e5e7eb;
-  padding: 0 12px;
-  font-size: 0.9rem;
-  cursor: pointer;
-  transition: 0.25s ease;
-}
-
-.list__input:focus,
-.list__select:focus {
-  border-color: #38bdf8;
-  box-shadow: 0 0 0 2px rgba(56, 189, 248, 0.15);
-  transform: translateY(-1px);
 }
 
 /* GRID DE CARDS */
 .list__grid {
   display: grid;
-  gap: 14px;
   grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 14px;
 }
 
 /* CARD */
 .card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-md);
+  padding: 14px;
   display: flex;
   flex-direction: column;
   gap: 10px;
-  background: linear-gradient(180deg, #020617, #020617);
-  border: 1px solid #1e293b;
-  border-radius: 16px;
-  padding: 16px;
-  transition: 0.25s ease;
-}
+  box-shadow: var(--shadow-sm);
+  transition: var(--transition-base);
 
-.card:hover {
-  transform: translateY(-4px);
-  border-color: #38bdf8;
-  box-shadow: 0 12px 28px rgba(56, 189, 248, 0.12);
+  &:hover {
+    border-color: var(--primary-500);
+    transform: translateY(-2px);
+    box-shadow: 0 12px 30px rgba(56, 189, 248, 0.12);
+  }
 }
 
 .card__header {
-  font-size: 1.05rem;
+  font-size: 1.05rem; /* antes: 0.95rem */
   font-weight: 600;
-  color: #facc15;
+  color: var(--text-primary);
+  line-height: 1.3;
+}
+
+.card__title {
+  letter-spacing: 0.2px;
 }
 
 .card__body {
   display: flex;
   flex-direction: column;
-  gap: 6px;
-  font-size: 0.9rem;
-  color: #cbd5e1;
+  gap: 6px; /* mais espaçamento */
 }
 
 .card__text {
-  color: inherit;
+  font-size: 0.9rem; /* antes: 0.82rem */
+  color: var(--text-secondary);
+  line-height: 1.35;
 }
 
+.card__text:last-child {
+  color: var(--primary-500);
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+/* AÇÕES */
 .card__actions {
   display: flex;
-  gap: 10px;
+  gap: 8px;
   margin-top: 6px;
-}
-
-/* BOTÕES */
-.btn {
-  padding: 7px 14px;
-  border-radius: 10px;
-  border: none;
-  font-size: 0.85rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: 0.2s ease;
-}
-
-.btn--edit {
-  background: #0ea5e9;
-  color: #020617;
-}
-
-.btn--edit:hover {
-  background: #38bdf8;
-}
-
-.btn--delete {
-  background: #ef4444;
-  color: #020617;
-}
-
-.btn--delete:hover {
-  background: #f87171;
+  flex-wrap: wrap;
 }
 
 /* PAGINAÇÃO */
 .pagination {
   display: flex;
-  justify-content: space-between;
   align-items: center;
+  justify-content: space-between;
   gap: 12px;
-  padding-top: 6px;
-  flex-wrap: wrap;
+  margin-top: 10px;
+  flex-wrap: nowrap;
+}
+
+.pagination__btn {
+  font-size: 0.8rem;
+  padding: 0 12px;
 }
 
 .pagination__text {
   font-size: 0.85rem;
-  color: #94a3b8;
+  color: var(--text-muted);
+  white-space: nowrap;
 }
 
-.pagination__btn {
-  padding: 7px 14px;
-  border-radius: 10px;
-  border: 1px solid #1e293b;
-  background: #020617;
-  color: #e5e7eb;
-  cursor: pointer;
-  transition: 0.2s ease;
-}
-
-.pagination__btn:hover:not(:disabled) {
-  border-color: #38bdf8;
-  color: #38bdf8;
-}
-
-.pagination__btn:disabled {
-  opacity: 0.4;
-  cursor: not-allowed;
-}
-
-/* ========================== */
-/* 📱 RESPONSIVIDADE */
-/* ========================== */
+/* RESPONSIVIDADE */
 
 /* tablet */
 @media (max-width: 900px) {
@@ -186,36 +116,26 @@
   .list__input {
     grid-column: span 2;
   }
-
-  .pagination {
-    justify-content: center;
-  }
 }
 
-/* celular */
+/* mobile */
 @media (max-width: 600px) {
   .list__controls {
     grid-template-columns: 1fr;
   }
 
-  .list {
-    margin: 0 20px;
-  }
-
-  .card__actions {
-    flex-direction: column;
-  }
-
-  .btn {
-    width: 100%;
-  }
-
   .pagination {
-    flex-direction: column;
-    align-items: stretch;
+    font-size: 0.8rem;
   }
 
   .pagination__btn {
-    width: 100%;
+    padding: 0 10px;
+  }
+}
+
+/* mobile pequeno */
+@media (max-width: 420px) {
+  .list__grid {
+    grid-template-columns: 1fr;
   }
 }

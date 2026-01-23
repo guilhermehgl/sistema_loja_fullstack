@@ -1,15 +1,17 @@
 <div class="modal-backdrop">
   <div class="modal-box">
 
-    <header class="modal-box__header">
-      <h3 class="modal-box__title">{{ title }}</h3>
-    </header>
+    <div class="modal-box__header">
+      <h3 class="modal-box__title">
+        {{ title }}
+      </h3>
+    </div>
 
-    <section class="modal-box__content">
+    <div class="modal-box__content">
       <ng-content></ng-content>
-    </section>
+    </div>
 
-    <footer class="modal-box__footer">
+    <div class="modal-box__footer">
       <button 
         *ngIf="showCancel" 
         type="button" 
@@ -19,7 +21,7 @@
         tabindex="0">
         Cancelar
       </button>
-    </footer>
+    </div>
 
   </div>
 </div>

@@ -7,7 +7,7 @@ import { BaseModalComponent } from '../base-modal/base-modal.component';
   standalone: true,
   imports: [CommonModule, BaseModalComponent],
   templateUrl: './alert-modal.component.html',
-  styleUrls: ['./alert-modal.component.scss']
+  styleUrls: ['../../../../../../src/styles/modal.global.scss']
 })
 export class AlertModalComponent {
   @Input() title = '';

@@ -6,7 +6,7 @@ import { CommonModule } from '@angular/common';
   standalone: true,
   imports: [CommonModule],
   templateUrl: './base-modal.component.html',
-  styleUrls: ['./base-modal.component.scss']
+  styleUrls: ['../../../../../../src/styles/modal.global.scss']
 })
 export class BaseModalComponent {
   @Input() title = '';

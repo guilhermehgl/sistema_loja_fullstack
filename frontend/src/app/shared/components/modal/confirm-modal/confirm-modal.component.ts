@@ -8,7 +8,7 @@ import { BaseModalComponent } from '../base-modal/base-modal.component';
   standalone: true,
   imports: [CommonModule, FormsModule, BaseModalComponent],
   templateUrl: './confirm-modal.component.html',
-  styleUrls: ['./confirm-modal.component.scss']
+  styleUrls: ['../../../../../../src/styles/modal.global.scss']
 })
 export class ConfirmModalComponent {
   @Input() title = '';

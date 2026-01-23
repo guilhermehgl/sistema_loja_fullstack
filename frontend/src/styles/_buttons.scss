@@ -1,0 +1,57 @@
+.btn {
+  min-height: 36px;
+  padding: 0 16px;
+  border-radius: var(--radius-sm);
+  border: none;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  transition: var(--transition-base);
+}
+
+/* PRIMARY (AZUL) */
+.btn--primary {
+  background: var(--primary-500);
+  color: #020617;
+
+  &:hover {
+    background: var(--primary-600);
+    transform: translateY(-1px);
+  }
+
+  &:active {
+    background: var(--primary-700);
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+
+/* SECONDARY (NEUTRO) */
+.btn--secondary {
+  background: var(--bg-card);
+  border: 1px solid var(--border-default);
+  color: var(--text-secondary);
+
+  &:hover {
+    border-color: var(--primary-500);
+    color: var(--primary-500);
+    transform: translateY(-1px);
+  }
+}
+
+/* DANGER */
+.btn--danger {
+  background: var(--danger-500);
+  color: white;
+
+  &:hover {
+    filter: brightness(1.1);
+  }
+}

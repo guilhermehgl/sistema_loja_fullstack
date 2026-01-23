@@ -13,7 +13,6 @@ type ConfirmAction = 'delete' | 'edit';
   standalone: true,
   imports: [CommonModule, FormsModule, DecimalPipe, ConfirmModalComponent, AlertModalComponent, EditProductModalComponent],
   templateUrl: './products-list.component.html',
-  styleUrls: ['./products-list.component.scss']
 })
 export class ProductsListComponent implements OnInit {
   products: Product[] = [];

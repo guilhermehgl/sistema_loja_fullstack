@@ -1,12 +1,23 @@
-<div class="titulo-container">
-    <h1 class="titulo">Cadastro de Produtos</h1>
+<div class="page-products">
+
+  <header class="page-products__header">
+    <h1 class="page-products__title">Cadastro de Produtos</h1>
+  </header>
+
+  <main class="page-products__content">
+
+    <section class="page-products__card">
+      <app-products-form></app-products-form>
+    </section>
+
+    <section class="page-products__card">
+      <app-products-list></app-products-list>
+    </section>
+
+  </main>
+
+  <footer class="page-products__footer">
+    <app-products-sale></app-products-sale>
+  </footer>
+
 </div>
-
-<app-products-form></app-products-form>
-
-
-
-<app-products-list></app-products-list>
-
-
-<app-products-sale></app-products-sale>

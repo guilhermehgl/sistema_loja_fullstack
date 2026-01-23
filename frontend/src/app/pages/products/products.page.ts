@@ -15,7 +15,6 @@ import { ProductsSaleComponent } from '../products/components/products-sale/prod
     ProductsSaleComponent,
   ],
   templateUrl: './products.page.html',
-  styleUrls: ['./products.page.scss']
 })
 export class ProductsPage {
   showSaleModal = false;

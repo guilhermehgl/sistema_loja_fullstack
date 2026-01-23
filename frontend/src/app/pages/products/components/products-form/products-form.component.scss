@@ -1,141 +1,75 @@
 .container-form {
-  display: flex;
-  justify-content: center;
-  padding: 24px;
+  width: 100%;
+  background: var(--bg-card);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-md);
+  padding: 20px;
+  box-shadow: var(--shadow-sm);
 }
 
-/* FORM */
 .form {
+  width: 100%;
+}
+
+/* GRID PRINCIPAL DO FORM */
+.form-grid {
   display: grid;
   grid-template-columns: repeat(5, 1fr);
-  gap: 18px;
+  gap: 14px;
   align-items: start;
-  background: linear-gradient(180deg, #020617, #020617);
-  border: 1px solid #1e293b;
-  padding: 22px 24px;
-  border-radius: 18px;
-  width: 100%;
-  max-width: 1200px;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.35);
-  animation: formIn 0.6s ease;
 }
 
-/* INPUT CONTAINER */
+/* CONTAINER DO INPUT + ERRO */
 .input-container {
   display: flex;
   flex-direction: column;
   gap: 6px;
-  min-width: 0;
-}
-
-/* INPUT */
-.input {
-  width: 100%;
-  height: 40px;
-  padding: 0 14px;
-  border-radius: 10px;
-  border: 1px solid #1e293b;
-  background: #020617;
-  color: #e5e7eb;
-  font-size: 0.95rem;
-  transition: 0.25s ease;
-}
-
-.input::placeholder {
-  color: #64748b;
-}
-
-.input:focus {
-  border-color: #38bdf8;
-  box-shadow: 0 0 0 2px rgba(56, 189, 248, 0.15);
-  transform: translateY(-1px);
 }
 
 /* ERRO */
 .form-error {
   font-size: 0.75rem;
-  color: #f87171;
-  line-height: 1.2;
+  color: var(--danger-500);
+  min-height: 14px;
+  margin: 0 10px;
 }
 
 /* BOTÃO */
-.btn-save {
-  height: 40px;
-  border-radius: 12px;
-  border: none;
-  background: linear-gradient(135deg, #38bdf8, #0ea5e9);
-  color: #020617;
-  font-weight: 700;
-  cursor: pointer;
-  transition: 0.25s ease;
+.form-action {
   display: flex;
-  align-items: center;
-  justify-content: center;
+  align-items: flex-end;
 }
 
-.btn-save:hover:not(:disabled) {
-  transform: translateY(-2px);
-  background: linear-gradient(135deg, #22c55e, #16a34a);
+.form-button {
+  width: 100%;
+  height: 38px;
 }
 
-.btn-save:disabled {
-  opacity: 0.4;
-  cursor: not-allowed;
-}
+/* ============================
+   RESPONSIVIDADE
+============================ */
 
-/* ============================= */
-/* 📱 RESPONSIVIDADE INTELIGENTE */
-/* ============================= */
-
-/* PC grande */
-@media (min-width: 1200px) {
-  .form {
-    grid-template-columns: repeat(5, 1fr);
-  }
-}
-
-/* notebook / tablet grande */
-@media (max-width: 1200px) {
-  .form {
+/* telas médias (tablet) */
+@media (max-width: 1100px) {
+  .form-grid {
     grid-template-columns: repeat(3, 1fr);
   }
-
-  .btn-save {
-    grid-column: span 3;
-  }
 }
 
-/* tablet */
-@media (max-width: 900px) {
-  .form {
+/* telas pequenas */
+@media (max-width: 700px) {
+  .form-grid {
     grid-template-columns: repeat(2, 1fr);
   }
-
-  .btn-save {
-    grid-column: span 2;
-  }
 }
 
-/* celular */
-@media (max-width: 600px) {
-  .form {
+/* mobile */
+@media (max-width: 480px) {
+  .form-grid {
     grid-template-columns: 1fr;
   }
 
-  .btn-save {
-    grid-column: span 1;
-  }
-}
-
-/* ANIMAÇÃO */
-@keyframes formIn {
-  from {
-    transform: translateY(20px);
-    opacity: 0;
-  }
-
-  to {
-    transform: translateY(0);
-    opacity: 1;
+  .form-action {
+    margin-top: 8px;
   }
 }

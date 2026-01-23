@@ -1,6 +1,11 @@
-<app-base-modal [title]="title" [showCancel]="true" (cancel)="cancel.emit()">
+<app-base-modal 
+  [title]="title" 
+  [showCancel]="true" 
+  (cancel)="cancel.emit()">
 
-  <p class="modal-text">{{ message }}</p>
+  <p class="modal-text">
+    {{ message }}
+  </p>
 
   <input 
     class="modal-input"
@@ -12,7 +17,9 @@
     autofocus 
   />
 
-  <p *ngIf="error" class="modal-error">Digite a senha</p>
+  <p *ngIf="error" class="modal-error">
+    Digite a senha
+  </p>
 
   <div class="modal-actions">
     <button 

@@ -3,7 +3,7 @@
   <form [formGroup]="form" class="modal-form">
 
     <div class="modal-field">
-      <label class="modal-label">Nome</label>
+      <span class="modal-label">Nome</span>
       <input class="modal-input" type="text" formControlName="name" placeholder="Nome do produto" />
       <small class="modal-error" *ngIf="name?.errors?.['required']">Nome é obrigatório</small>
       <small class="modal-error" *ngIf="name?.errors?.['minlength']">Mínimo 4 caracteres</small>
@@ -11,7 +11,7 @@
     </div>
 
     <div class="modal-field">
-      <label class="modal-label">Barcode</label>
+      <span class="modal-label">Barcode</span>
       <input
         class="modal-input"
         type="text"
@@ -31,7 +31,7 @@
     </div>
 
     <div class="modal-field">
-      <label class="modal-label">Quantidade</label>
+      <span class="modal-label">Quantidade</span>
       <input
         class="modal-input"
         type="text"
@@ -45,7 +45,7 @@
     </div>
 
     <div class="modal-field">
-      <label class="modal-label">Preço</label>
+      <span class="modal-label">Preço</span>
       <input
         class="modal-input"
         type="text"
@@ -67,7 +67,11 @@
       (click)="handleSave()">
       Salvar
     </button>
-    <button type="button" class="btn btn--secondary" (click)="handleCancel()">
+
+    <button 
+      type="button" 
+      class="btn btn--secondary" 
+      (click)="handleCancel()">
       Cancelar
     </button>
   </div>

@@ -21,7 +21,7 @@ interface CartItem {
     FormsModule,
   ],
   templateUrl: './sale-modal.component.html',
-  styleUrls: ['./sale-modal.component.scss']
+  styleUrls: ['../../../../../../src/styles/modal.global.scss']
 })
 export class SaleModalComponent implements OnInit {
 

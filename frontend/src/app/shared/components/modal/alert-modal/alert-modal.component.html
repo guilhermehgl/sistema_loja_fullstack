@@ -1,9 +1,14 @@
 <app-base-modal [title]="title">
 
-  <p class="modal-text">{{ message }}</p>
+  <p class="modal-text">
+    {{ message }}
+  </p>
 
   <div class="modal-actions">
-    <button type="button" class="btn btn--primary" (click)="handleClose()">
+    <button 
+      type="button" 
+      class="btn btn--primary" 
+      (click)="handleClose()">
       OK
     </button>
   </div>
