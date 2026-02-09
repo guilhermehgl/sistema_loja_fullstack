@@ -1,3 +1,9 @@
+@use '../app/shared/components/modal/alert-modal/alert-modal.component.scss';
+@use '../app/shared/components/modal/confirm-modal/confirm-modal.component.scss';
+@use '../app/shared/components/modal/base-modal/base-modal.component.scss';
+@use '../app/shared/components/modal/edit-modal/edit-modal.component.scss';
+@use '../app/shared/components/modal/sale-modal/sale-modal.component.scss';
+
 .modal-backdrop {
   position: fixed;
   inset: 0;

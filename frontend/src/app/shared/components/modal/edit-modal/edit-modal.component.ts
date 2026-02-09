@@ -45,19 +45,16 @@ export class EditProductModalComponent implements OnInit {
         setTimeout(() => this.cdr.detectChanges());
     }
 
-    /** Validador customizado: barcode já existe e não é o mesmo do produto */
     barcodeExistsValidator(control: AbstractControl) {
         const value = control.value;
         if (!value) return null;
-
-        // Se já existe outro código igual
+    
         const exists = this.existingBarcodes.includes(value) && value !== this.product.barcode;
 
         return exists ? { barcodeExists: true } : null;
     }
 
 
-    /** Só permite números em barcode e quantity */
     onNumberInput(event: KeyboardEvent) {
         const allowed = ['Backspace', 'ArrowLeft', 'ArrowRight', 'Tab'];
         if (!/[0-9]/.test(event.key) && !allowed.includes(event.key)) {
@@ -65,7 +62,6 @@ export class EditProductModalComponent implements OnInit {
         }
     }
 
-    /** Permite números e , ou . no preço */
     onPriceInput(event: KeyboardEvent) {
         const allowed = ['Backspace', 'ArrowLeft', 'ArrowRight', 'Tab'];
         if (!/[0-9.,]/.test(event.key) && !allowed.includes(event.key)) {
@@ -92,7 +88,6 @@ export class EditProductModalComponent implements OnInit {
         this.cancel.emit();
     }
 
-    // getters para template
     get name() { return this.form.get('name'); }
     get barcode() { return this.form.get('barcode'); }
     get quantity() { return this.form.get('quantity'); }

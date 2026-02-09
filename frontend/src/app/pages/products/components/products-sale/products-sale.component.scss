@@ -1,7 +1,3 @@
-/* =========================================================
-   BOTÃO VENDER - PREMIUM MODERNO
-========================================================= */
-
 .container-vender {
   width: 100%;
   display: flex;
@@ -10,7 +6,6 @@
   margin: 4rem 0 2rem;
 }
 
-/* BOTÃO PRINCIPAL */
 .vender-btn {
   position: relative;
   padding: 1.1rem 3.6rem;
@@ -38,7 +33,6 @@
   overflow: hidden;
 }
 
-/* EFEITO GLOW */
 .vender-btn::before {
   content: "";
   position: absolute;
@@ -54,7 +48,6 @@
   transition: var(--transition-base);
 }
 
-/* HOVER */
 .vender-btn:hover {
   transform: translateY(-3px) scale(1.02);
   box-shadow:
@@ -66,7 +59,7 @@
   opacity: 1;
 }
 
-/* CLICK */
+
 .vender-btn:active {
   transform: translateY(0) scale(0.98);
   box-shadow:
@@ -89,7 +82,6 @@
 }
 
 
-/* RESPONSIVO */
 @media (max-width: 768px) {
   .vender-btn {
     font-size: 1.1rem;

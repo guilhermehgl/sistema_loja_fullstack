@@ -11,7 +11,6 @@
   width: 100%;
 }
 
-/* GRID PRINCIPAL DO FORM */
 .form-grid {
   display: grid;
   grid-template-columns: repeat(5, 1fr);
@@ -19,14 +18,12 @@
   align-items: start;
 }
 
-/* CONTAINER DO INPUT + ERRO */
 .input-container {
   display: flex;
   flex-direction: column;
   gap: 6px;
 }
 
-/* ERRO */
 .form-error {
   font-size: 0.75rem;
   color: var(--danger-500);
@@ -34,7 +31,6 @@
   margin: 0 10px;
 }
 
-/* BOTÃO */
 .form-action {
   display: flex;
   align-items: flex-end;
@@ -45,25 +41,18 @@
   height: 38px;
 }
 
-/* ============================
-   RESPONSIVIDADE
-============================ */
-
-/* telas médias (tablet) */
 @media (max-width: 1100px) {
   .form-grid {
     grid-template-columns: repeat(3, 1fr);
   }
 }
 
-/* telas pequenas */
 @media (max-width: 700px) {
   .form-grid {
     grid-template-columns: repeat(2, 1fr);
   }
 }
 
-/* mobile */
 @media (max-width: 480px) {
   .form-grid {
     grid-template-columns: 1fr;

@@ -6,7 +6,7 @@
   gap: 14px;
 }
 
-/* TÍTULO */
+
 .list__title-text {
   font-size: 1.15rem;
   font-weight: 600;
@@ -14,21 +14,21 @@
   letter-spacing: 0.2px;
 }
 
-/* CONTROLES */
+
 .list__controls {
   display: grid;
   grid-template-columns: 2fr 1fr 1fr;
   gap: 12px;
 }
 
-/* GRID DE CARDS */
+
 .list__grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
   gap: 14px;
 }
 
-/* CARD */
+
 .card {
   background: var(--bg-card);
   border: 1px solid var(--border-default);
@@ -48,7 +48,7 @@
 }
 
 .card__header {
-  font-size: 1.05rem; /* antes: 0.95rem */
+  font-size: 1.05rem;
   font-weight: 600;
   color: var(--text-primary);
   line-height: 1.3;
@@ -61,11 +61,11 @@
 .card__body {
   display: flex;
   flex-direction: column;
-  gap: 6px; /* mais espaçamento */
+  gap: 6px;
 }
 
 .card__text {
-  font-size: 0.9rem; /* antes: 0.82rem */
+  font-size: 0.9rem;
   color: var(--text-secondary);
   line-height: 1.35;
 }
@@ -76,7 +76,7 @@
   font-size: 0.95rem;
 }
 
-/* AÇÕES */
+
 .card__actions {
   display: flex;
   gap: 8px;
@@ -84,7 +84,7 @@
   flex-wrap: wrap;
 }
 
-/* PAGINAÇÃO */
+
 .pagination {
   display: flex;
   align-items: center;
@@ -105,9 +105,6 @@
   white-space: nowrap;
 }
 
-/* RESPONSIVIDADE */
-
-/* tablet */
 @media (max-width: 900px) {
   .list__controls {
     grid-template-columns: 1fr 1fr;
@@ -118,7 +115,7 @@
   }
 }
 
-/* mobile */
+
 @media (max-width: 600px) {
   .list__controls {
     grid-template-columns: 1fr;
@@ -133,7 +130,7 @@
   }
 }
 
-/* mobile pequeno */
+
 @media (max-width: 420px) {
   .list__grid {
     grid-template-columns: 1fr;

@@ -1,0 +1,27 @@
+.alert-modal {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.alert-modal__message {
+  font-size: 0.95rem;
+  line-height: 1.6;
+  color: var(--text-secondary);
+  padding: 10px 12px;
+  border-radius: var(--radius-md);
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--border-default);
+}
+
+.alert-modal__actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.alert-modal__btn {
+  min-width: 110px;
+  font-size: 0.9rem;
+  letter-spacing: 0.3px;
+}

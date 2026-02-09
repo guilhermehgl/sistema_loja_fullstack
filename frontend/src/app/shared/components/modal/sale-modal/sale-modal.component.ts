@@ -1,7 +1,7 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-
+import { BaseModalComponent } from '../base-modal/base-modal.component';
 import { ProductsService, Product } from '../../../../core/services/products.service';
 import { OrdersService } from '../../../../core/services/orders.service';
 
@@ -19,6 +19,7 @@ interface CartItem {
   imports: [
     CommonModule,
     FormsModule,
+    BaseModalComponent,
   ],
   templateUrl: './sale-modal.component.html',
   styleUrls: ['../../../../../../src/styles/modal.global.scss']
@@ -48,7 +49,6 @@ export class SaleModalComponent implements OnInit {
     });
   }
 
-  /** Filtra produtos e limita a 3 */
   filter() {
     this.visibleProducts = this.products
       .filter(p =>
@@ -58,9 +58,7 @@ export class SaleModalComponent implements OnInit {
       .slice(0, 3);
   }
 
-  /** Adiciona produto ao carrinho */
   add(product: Product) {
-    // 🚫 Estoque zerado nunca entra no carrinho
     if (product.quantity <= 0) {
       return;
     }
@@ -76,7 +74,7 @@ export class SaleModalComponent implements OnInit {
         name: product.name,
         price: product.price,
         quantity: 1,
-        stock: product.quantity, // 👈 estoque real
+        stock: product.quantity, 
       });
     }
   }
@@ -94,7 +92,6 @@ export class SaleModalComponent implements OnInit {
   }
 
   onQuantityChange(item: CartItem) {
-    // Garante número inteiro
     item.quantity = Math.floor(Number(item.quantity));
 
     if (item.quantity < 1) {
@@ -109,7 +106,6 @@ export class SaleModalComponent implements OnInit {
   onQuantityInput(event: Event, item: CartItem) {
     const input = event.target as HTMLInputElement;
 
-    // Permite campo vazio enquanto digita
     if (input.value === '') {
       item.quantity = 0;
       return;
@@ -119,7 +115,6 @@ export class SaleModalComponent implements OnInit {
 
     if (isNaN(value)) return;
 
-    // Limita apenas o teto (estoque)
     if (value > item.stock) {
       value = item.stock;
       input.value = String(value);
@@ -129,7 +124,6 @@ export class SaleModalComponent implements OnInit {
   }
 
   onQuantityBlur(item: CartItem) {
-    // Quando sair do campo, garante valor válido
     if (!item.quantity || item.quantity < 1) {
       item.quantity = 1;
     }
@@ -141,7 +135,6 @@ export class SaleModalComponent implements OnInit {
     }
   }
 
-  /** Aumenta quantidade */
   inc(item: CartItem) {
     if (item.quantity < item.stock) {
       item.quantity++;
@@ -149,7 +142,6 @@ export class SaleModalComponent implements OnInit {
   }
 
 
-  /** Diminui quantidade */
   dec(item: CartItem) {
     item.quantity--;
     if (item.quantity <= 0) {
@@ -157,19 +149,16 @@ export class SaleModalComponent implements OnInit {
     }
   }
 
-  /** Total da venda (somente visual) */
   get total(): number {
     return this.cart.reduce((sum, i) => sum + i.price * i.quantity, 0);
   }
 
-  /** Finaliza venda chamando o backend */
   finalize() {
     if (this.cart.length === 0) {
       this.errorMessage = 'Carrinho vazio';
       return;
     }
 
-    // Aqui futuramente entra chamada ao backend (/orders)
     const total = this.total;
 
     this.success.emit(total);
@@ -199,7 +188,6 @@ export class SaleModalComponent implements OnInit {
     });
   }
 
-  /** Fecha a modal */
   closeModal() {
     this.close.emit();
   }

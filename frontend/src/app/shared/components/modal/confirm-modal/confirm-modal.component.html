@@ -1,33 +1,39 @@
 <app-base-modal 
   [title]="title" 
   [showCancel]="true" 
-  (cancel)="cancel.emit()">
+  (cancel)="cancel.emit()"
+>
 
-  <p class="modal-text">
-    {{ message }}
-  </p>
+  <div class="confirm-modal">
 
-  <input 
-    class="modal-input"
-    [type]="inputType" 
-    [(ngModel)]="value" 
-    (keyup.enter)="handleConfirm()" 
-    name="confirmInput" 
-    (input)="error = false" 
-    autofocus 
-  />
+    <p class="confirm-modal__message">
+      {{ message }}
+    </p>
 
-  <p *ngIf="error" class="modal-error">
-    Digite a senha
-  </p>
+    <input 
+      class="confirm-modal__input"
+      [type]="inputType" 
+      [(ngModel)]="value" 
+      (keyup.enter)="handleConfirm()" 
+      name="confirmInput" 
+      (input)="error = false" 
+      autofocus 
+    />
 
-  <div class="modal-actions">
-    <button 
-      type="button" 
-      class="btn btn--primary" 
-      (click)="handleConfirm(); $event.stopPropagation()">
-      OK
-    </button>
+    <p *ngIf="error" class="confirm-modal__error">
+      Digite a senha
+    </p>
+
+<button 
+  modal-actions
+  type="button" 
+  class="btn btn--primary modal-box__btn"
+  (click)="handleConfirm(); $event.stopPropagation()"
+>
+  OK
+</button>
+
+
   </div>
 
 </app-base-modal>

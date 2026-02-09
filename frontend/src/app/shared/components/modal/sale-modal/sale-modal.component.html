@@ -1,71 +1,104 @@
-<div class="modal-backdrop">
-  <div class="modal-box modal-box--large">
+<app-base-modal
+  [title]="'Venda'"
+  [showCancel]="true"
+  (cancel)="close.emit()"
+  class="sale-modal-wrapper"
+>
 
-    <div class="modal-box__header">
-      <h2 class="modal-box__title">Venda</h2>
-      <button class="modal-close" (click)="close.emit()">×</button>
-    </div>
+  <div class="sale-modal">
 
-    <input 
-      class="modal-input modal-input--search" 
-      [(ngModel)]="search" 
-      (input)="filter()" 
-      placeholder="Buscar produto..." 
+    <input
+      class="sale-modal__search"
+      [(ngModel)]="search"
+      (input)="filter()"
+      placeholder="Buscar produto..."
     />
 
-    <div class="sale-list">
-      <div class="sale-item" *ngFor="let p of visibleProducts">
-        <span class="sale-text">
+    <div class="sale-modal__list">
+
+      <div class="sale-modal__item" *ngFor="let p of visibleProducts">
+
+        <span class="sale-modal__item-text">
           {{ p.name }} - R$ {{ p.price | number:'1.2-2' }}
         </span>
-        <button 
-          class="btn btn--primary" 
-          (click)="add(p)" 
-          [disabled]="!canAddProduct(p) || p.quantity <= 0">
+
+        <button
+          type="button"
+          class="btn btn--primary sale-modal__btn-add"
+          (click)="add(p)"
+          [disabled]="!canAddProduct(p) || p.quantity <= 0"
+        >
           Adicionar
         </button>
+
       </div>
+
     </div>
 
-    <div class="sale-cart" *ngIf="cart.length">
+    <div class="sale-modal__cart" *ngIf="cart.length">
 
-      <div class="sale-cart-item" *ngFor="let item of cart">
+      <div class="sale-modal__cart-item" *ngFor="let item of cart">
 
-        <div class="sale-cart-row">
-          <span class="sale-text">{{ item.name }}</span>
+        <div class="sale-modal__cart-row">
 
-          <div class="sale-qty">
-            <button class="btn btn--secondary" (click)="dec(item)">-</button>
-            <input 
-              class="modal-input modal-input--qty"
-              type="number" 
-              [value]="item.quantity" 
+          <span class="sale-modal__cart-name">
+            {{ item.name }}
+          </span>
+
+          <div class="sale-modal__qty">
+
+            <button
+              type="button"
+              class="btn btn--secondary sale-modal__qty-btn"
+              (click)="dec(item)"
+            >
+              -
+            </button>
+
+            <input
+              class="sale-modal__qty-input"
+              type="number"
+              [value]="item.quantity"
               (input)="onQuantityInput($event, item)"
-              (blur)="onQuantityBlur(item)" 
-              (keydown)="blockInvalidKeys($event)" 
+              (blur)="onQuantityBlur(item)"
+              (keydown)="blockInvalidKeys($event)"
             />
-            <button class="btn btn--secondary" (click)="inc(item)" [disabled]="!canIncrease(item)">+</button>
+
+            <button
+              type="button"
+              class="btn btn--secondary sale-modal__qty-btn"
+              (click)="inc(item)"
+              [disabled]="!canIncrease(item)"
+            >
+              +
+            </button>
+
           </div>
+
         </div>
 
-        <div class="modal-error" *ngIf="item.quantity >= item.stock">
+        <p class="sale-modal__stock-error" *ngIf="item.quantity >= item.stock">
           Limite de estoque atingido
-        </div>
+        </p>
 
       </div>
 
-      <div class="sale-total">
-        Total: R$ {{ total | number:'1.2-2' }}
+      <div class="sale-modal__total">
+        Total: <strong>R$ {{ total | number:'1.2-2' }}</strong>
       </div>
 
-    </div>
-
-    <div class="modal-footer">
-      <button class="btn btn--secondary" (click)="close.emit()">Cancelar</button>
-      <button class="btn btn--primary" (click)="finalize()" [disabled]="loading || !cart.length">
-        {{ loading ? 'Vendendo...' : 'Finalizar venda' }}
-      </button>
     </div>
 
   </div>
-</div>
+
+  <button
+    modal-actions
+    type="button"
+    class="btn btn--primary modal-box__btn"
+    (click)="finalize()"
+    [disabled]="loading || !cart.length"
+  >
+    {{ loading ? 'Vendendo...' : 'Finalizar venda' }}
+  </button>
+
+</app-base-modal>

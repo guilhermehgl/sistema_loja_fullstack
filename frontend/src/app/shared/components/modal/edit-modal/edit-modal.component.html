@@ -1,19 +1,35 @@
-<app-base-modal [title]="'Editar produto'" (cancel)="handleCancel()">
+<app-base-modal 
+  [title]="'Editar produto'" 
+  [showCancel]="true"
+  (cancel)="handleCancel()"
+>
 
-  <form [formGroup]="form" class="modal-form">
+  <form [formGroup]="form" class="edit-modal">
 
-    <div class="modal-field">
-      <span class="modal-label">Nome</span>
-      <input class="modal-input" type="text" formControlName="name" placeholder="Nome do produto" />
-      <small class="modal-error" *ngIf="name?.errors?.['required']">Nome é obrigatório</small>
-      <small class="modal-error" *ngIf="name?.errors?.['minlength']">Mínimo 4 caracteres</small>
-      <small class="modal-error" *ngIf="name?.errors?.['maxlength']">Máximo 30 caracteres</small>
+    <div class="edit-modal__field">
+      <label class="edit-modal__label">Nome</label>
+      <input 
+        class="edit-modal__input" 
+        type="text" 
+        formControlName="name" 
+        placeholder="Nome do produto" 
+      />
+
+      <small class="edit-modal__error" *ngIf="name?.errors?.['required']">
+        Nome é obrigatório
+      </small>
+      <small class="edit-modal__error" *ngIf="name?.errors?.['minlength']">
+        Mínimo 4 caracteres
+      </small>
+      <small class="edit-modal__error" *ngIf="name?.errors?.['maxlength']">
+        Máximo 30 caracteres
+      </small>
     </div>
 
-    <div class="modal-field">
-      <span class="modal-label">Barcode</span>
+    <div class="edit-modal__field">
+      <label class="edit-modal__label">Barcode</label>
       <input
-        class="modal-input"
+        class="edit-modal__input"
         type="text"
         formControlName="barcode"
         placeholder="12345678"
@@ -22,58 +38,63 @@
         (keydown)="onNumberInput($event)"
         (blur)="barcode?.updateValueAndValidity()"
       />
-      <small class="modal-error" *ngIf="barcode?.errors?.['pattern'] && (barcode?.dirty || barcode?.touched)">
+
+      <small class="edit-modal__error" *ngIf="barcode?.errors?.['pattern'] && (barcode?.dirty || barcode?.touched)">
         O código deve ter exatamente 8 números.
       </small>
-      <small class="modal-error" *ngIf="barcode?.errors?.['barcodeExists']">
+
+      <small class="edit-modal__error" *ngIf="barcode?.errors?.['barcodeExists']">
         Este código de barras já existe!
       </small>
     </div>
 
-    <div class="modal-field">
-      <span class="modal-label">Quantidade</span>
+    <div class="edit-modal__field">
+      <label class="edit-modal__label">Quantidade</label>
       <input
-        class="modal-input"
+        class="edit-modal__input"
         type="text"
         formControlName="quantity"
         maxlength="6"
         inputmode="numeric"
         (keydown)="onNumberInput($event)"
       />
-      <small class="modal-error" *ngIf="quantity?.errors?.['required']">Quantidade obrigatória</small>
-      <small class="modal-error" *ngIf="quantity?.errors?.['pattern']">Somente números</small>
+
+      <small class="edit-modal__error" *ngIf="quantity?.errors?.['required']">
+        Quantidade obrigatória
+      </small>
+      <small class="edit-modal__error" *ngIf="quantity?.errors?.['pattern']">
+        Somente números
+      </small>
     </div>
 
-    <div class="modal-field">
-      <span class="modal-label">Preço</span>
+    <div class="edit-modal__field">
+      <label class="edit-modal__label">Preço</label>
       <input
-        class="modal-input"
+        class="edit-modal__input"
         type="text"
         formControlName="price"
         placeholder="10,50"
         (keydown)="onPriceInput($event)"
       />
-      <small class="modal-error" *ngIf="price?.errors?.['required']">Preço obrigatório</small>
-      <small class="modal-error" *ngIf="price?.errors?.['pattern']">Formato inválido</small>
+
+      <small class="edit-modal__error" *ngIf="price?.errors?.['required']">
+        Preço obrigatório
+      </small>
+      <small class="edit-modal__error" *ngIf="price?.errors?.['pattern']">
+        Formato inválido
+      </small>
     </div>
 
   </form>
 
-  <div class="modal-footer">
-    <button 
-      type="button" 
-      class="btn btn--primary" 
-      [disabled]="form.invalid" 
-      (click)="handleSave()">
-      Salvar
-    </button>
-
-    <button 
-      type="button" 
-      class="btn btn--secondary" 
-      (click)="handleCancel()">
-      Cancelar
-    </button>
-  </div>
+  <button 
+    modal-actions
+    type="button" 
+    class="btn btn--primary modal-box__btn"
+    [disabled]="form.invalid"
+    (click)="handleSave()"
+  >
+    Salvar
+  </button>
 
 </app-base-modal>

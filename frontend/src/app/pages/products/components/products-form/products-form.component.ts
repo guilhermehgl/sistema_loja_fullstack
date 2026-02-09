@@ -93,9 +93,9 @@ export class ProductsFormComponent {
     const input = event.target as HTMLInputElement;
 
     input.value = input.value
-      .replace(/[^0-9.,]/g, '')   // só números, ponto e vírgula
-      .replace(/(,.*),/g, '$1')   // só uma vírgula
-      .replace(/(\..*)\./g, '$1'); // só um ponto
+      .replace(/[^0-9.,]/g, '') 
+      .replace(/(,.*),/g, '$1')   
+      .replace(/(\..*)\./g, '$1'); 
 
     this.form.get('price')?.setValue(input.value);
   }
@@ -105,7 +105,7 @@ export class ProductsFormComponent {
 
     if (!value) return;
 
-    // troca vírgula por ponto
+
     value = value.replace(',', '.');
 
     let number = parseFloat(value);
@@ -168,7 +168,6 @@ export class ProductsFormComponent {
   }
 
 
-  // ✅ TIPAGEM PROFISSIONAL PRO TEMPLATE
   get f(): ProductFormControls {
     return this.form.controls as ProductFormControls;
   }

@@ -1,16 +1,21 @@
 <app-base-modal [title]="title">
 
-  <p class="modal-text">
-    {{ message }}
-  </p>
+  <div class="alert-modal">
 
-  <div class="modal-actions">
-    <button 
-      type="button" 
-      class="btn btn--primary" 
-      (click)="handleClose()">
-      OK
-    </button>
+    <p class="alert-modal__message">
+      {{ message }}
+    </p>
+
+    <div class="alert-modal__actions">
+      <button 
+        type="button"
+        class="btn btn--primary alert-modal__btn"
+        (click)="handleClose()"
+      >
+        OK
+      </button>
+    </div>
+
   </div>
 
 </app-base-modal>

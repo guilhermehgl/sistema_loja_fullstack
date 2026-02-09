@@ -21,14 +21,12 @@ export class OrdersService {
 
   constructor(
     private http: HttpClient,
-    private productsService: ProductsService, // 👈 para atualizar estoque
+    private productsService: ProductsService,
   ) {}
 
-  /** Cria uma venda */
   createOrder(dto: CreateOrderDto) {
     return this.http.post(this.API, dto).pipe(
       tap(() => {
-        // 🔥 após vender, recarrega produtos (estoque atualizado)
         this.productsService.load();
       })
     );

@@ -16,11 +16,9 @@ export class ProductsService {
       where: { barcode: dto.barcode },
     });
 
-    // Se já existir, soma a quantidade
     if (product) {
       product.quantity += dto.quantity;
 
-      // Atualiza o preço se vier diferente
       if (dto.price !== product.price) {
         product.price = dto.price;
       }
@@ -28,7 +26,6 @@ export class ProductsService {
       return this.repository.save(product);
     }
 
-    // Se não existir, cria novo
     const newProduct = this.repository.create(dto);
     return this.repository.save(newProduct);
   }
@@ -52,7 +49,6 @@ export class ProductsService {
     const product = await this.repository.findOneBy({ id });
     if (!product) throw new Error('Produto não encontrado');
 
-    // Atualiza campos
     product.name = dto.name ?? product.name;
     product.barcode = dto.barcode ?? product.barcode;
     product.quantity = dto.quantity ?? product.quantity;

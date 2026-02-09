@@ -11,17 +11,22 @@
       <ng-content></ng-content>
     </div>
 
-    <div class="modal-box__footer">
-      <button 
-        *ngIf="showCancel" 
-        type="button" 
-        class="btn btn--secondary" 
-        (click)="onCancel()" 
-        (keydown.enter)="onCancel()" 
-        tabindex="0">
-        Cancelar
-      </button>
-    </div>
+<div class="modal-box__footer">
+  <div class="modal-box__footer-actions">
+    <button
+      *ngIf="showCancel"
+      type="button"
+      class="btn btn--secondary modal-box__btn"
+      (click)="onCancel()"
+      (keydown.enter)="onCancel()"
+    >
+      Cancelar
+    </button>
+
+    <ng-content select="[modal-actions]"></ng-content>
+  </div>
+</div>
+
 
   </div>
 </div>

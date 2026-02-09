@@ -23,20 +23,20 @@ export class ProductsService {
     this.load();
   }
 
-  /** Carrega todos os produtos e atualiza o BehaviorSubject */
+
   load() {
     this.http.get<Product[]>(this.API)
       .subscribe(data => this._products$.next(data));
   }
 
-  /** Cria um novo produto */
+
   create(product: Partial<Product>) {
     return this.http.post<Product>(this.API, product).pipe(
       tap(() => this.load())
     );
   }
 
-  /** Deleta um produto enviando senha de admin */
+
   handleProduct(productId: string, adminPassword: string) {
     return this.http.delete(`${this.API}/${productId}`, {
       body: { adminPassword }
@@ -45,13 +45,13 @@ export class ProductsService {
     );
   }
 
-  /** Verifica se existe produto com o mesmo barcode */
+
   existsByBarcode(barcode: string): boolean {
     if (!barcode) return false;
     return this._products$.value.some(p => p.barcode === barcode);
   }
 
-  /** Valida a senha de administrador via backend */
+
   validateAdminPassword(password: string) {
     return this.http.post<{ valid: boolean }>(`${this.API}/validate-password`, { password })
       .pipe(

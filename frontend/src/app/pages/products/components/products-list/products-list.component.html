@@ -1,11 +1,11 @@
 <div class="list">
 
-  <!-- TÍTULO -->
+
   <div class="list__title">
     <h3 class="list__title-text">Produtos Cadastrados</h3>
   </div>
 
-  <!-- CONTROLES -->
+
   <div class="list__controls">
     <input class="list__input input" type="text" placeholder="Pesquisar produto..." [(ngModel)]="searchTerm"
       (ngModelChange)="currentPage = 1; applyFilters()" />
@@ -23,7 +23,7 @@
     </select>
   </div>
 
-  <!-- GRID -->
+
   <div class="list__grid">
     <div class="card" *ngFor="let product of filteredProducts">
 
@@ -49,7 +49,7 @@
     </div>
   </div>
 
-  <!-- PAGINAÇÃO -->
+
   <div class="pagination">
     <button class="btn btn--secondary pagination__btn" (click)="previousPage()" [disabled]="currentPage === 1">
       ⬅ Página anterior
@@ -66,18 +66,18 @@
 
 </div>
 
-<!-- MODAL CONFIRMAÇÃO -->
+
 
 <app-confirm-modal *ngIf="showConfirmModal" title="Confirmação de administrador"
   message="Digite a senha do administrador" inputType="password" (confirm)="confirmActionPassword($event)"
   (cancel)="showConfirmModal = false">
 </app-confirm-modal>
 
-<!-- MODAL EDITAR -->
+
 <app-edit-product-modal *ngIf="showEditModal && productTarget" [product]="productTarget"
   [existingBarcodes]="allBarcodes" (save)="updateProduct($event)" (cancel)="showEditModal = false">
 </app-edit-product-modal>
 
-<!-- MODAL ALERTA -->
+
 <app-alert-modal *ngIf="showAlertModal" title="Aviso" [message]="alertMessage" (close)="showAlertModal = false">
 </app-alert-modal>

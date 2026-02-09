@@ -27,7 +27,6 @@
   white-space: normal;
 }
 
-/* linha moderna embaixo */
 .page-products__title::after {
   content: "";
   position: absolute;
@@ -44,14 +43,12 @@
   );
 }
 
-/* CONTEÚDO PRINCIPAL */
 .page-products__content {
   display: flex;
   flex-direction: column;
   gap: 20px;
 }
 
-/* CARDS (FORM + LISTA) */
 .page-products__card {
   background-color: var(--bg-card);
   border: 1px solid var(--border-default);
@@ -60,7 +57,6 @@
   box-shadow: var(--shadow-sm);
 }
 
-/* FOOTER (BOTÃO GRANDE) */
 .page-products__footer {
   margin-top: auto;
   display: flex;

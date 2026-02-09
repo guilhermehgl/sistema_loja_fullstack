@@ -19,26 +19,24 @@ export class ProductsListComponent implements OnInit {
   filteredProducts: Product[] = [];
   processedProducts: Product[] = [];
 
-  // 🔍 Busca
+
   searchTerm: string = '';
 
-  // 🔢 Quantidade por página
+
   pageSize: number = 20;
 
-  // 🔃 Ordenação
+
   sortBy: 'barcode' | 'name' = 'barcode';
 
-  // 📄 Paginação
+
   currentPage: number = 1;
   totalPages: number = 1;
 
-  // Modais
   showConfirmModal = false;
   showAlertModal = false;
   showEditModal = false;
   alertMessage = '';
 
-  // Estado unificado de ação
   confirmAction?: ConfirmAction;
   productTarget?: Product;
 
@@ -56,14 +54,12 @@ export class ProductsListComponent implements OnInit {
     });
   }
 
-  // 🔑 Abrir modal de confirmação de senha para delete ou edit
   openConfirmModal(product: Product, action: ConfirmAction) {
     this.productTarget = product;
     this.confirmAction = action;
     this.showConfirmModal = true;
   }
 
-  // 📌 Chamado quando confirma a senha na modal
   confirmActionPassword(password: string) {
     if (!password || !this.productTarget || !this.confirmAction) return;
 
@@ -93,7 +89,6 @@ export class ProductsListComponent implements OnInit {
     });
   }
 
-  // 🔴 Executa delete
   private executeDelete(password: string) {
     if (!this.productTarget) return;
 
@@ -119,7 +114,6 @@ export class ProductsListComponent implements OnInit {
     });
   }
 
-  // 🔄 Atualiza produto após edição
   updateProduct(updated: Product) {
     this.service.updateProduct(updated).subscribe({
       next: () => {
@@ -142,7 +136,6 @@ export class ProductsListComponent implements OnInit {
     });
   }
 
-  // 🔃 Filtros e paginação
   applyFilters() {
     const pageSize = Number(this.pageSize);
     let result = [...this.products];

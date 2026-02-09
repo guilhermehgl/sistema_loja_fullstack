@@ -13,7 +13,6 @@
   transition: var(--transition-base);
 }
 
-/* PRIMARY (AZUL) */
 .btn--primary {
   background: var(--primary-500);
   color: #020617;
@@ -33,7 +32,6 @@
   }
 }
 
-/* SECONDARY (NEUTRO) */
 .btn--secondary {
   background: var(--bg-card);
   border: 1px solid var(--border-default);
@@ -46,7 +44,6 @@
   }
 }
 
-/* DANGER */
 .btn--danger {
   background: var(--danger-500);
   color: white;
