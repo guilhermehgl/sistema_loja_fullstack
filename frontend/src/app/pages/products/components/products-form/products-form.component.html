@@ -56,3 +56,10 @@
 
   </form>
 </div>
+
+<app-alert-modal
+  *ngIf="showAlertModal"
+  title="Aviso"
+  [message]="alertMessage"
+  (close)="showAlertModal = false"
+></app-alert-modal>

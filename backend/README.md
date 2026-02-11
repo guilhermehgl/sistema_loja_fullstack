@@ -23,7 +23,17 @@ API em `http://localhost:3000`.
 
 ## Variaveis de ambiente
 
-Crie `.env`:
+Copie `.env.example` para `.env`:
+
+```bash
+# Linux/macOS
+cp .env.example .env
+
+# Windows PowerShell
+Copy-Item .env.example .env
+```
+
+Use este formato:
 
 ```env
 DB_HOST=localhost
@@ -37,6 +47,14 @@ ADMIN_PASSWORD_HASH=
 
 TYPEORM_SYNC=false
 TYPEORM_LOGGING=false
+```
+
+## Executar com Docker Compose
+
+Na raiz do projeto:
+
+```bash
+docker compose up --build
 ```
 
 ## Scripts

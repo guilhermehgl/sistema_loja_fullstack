@@ -59,22 +59,38 @@ export class ProductsListComponent implements OnInit {
     this.productTarget = product;
     this.confirmAction = action;
     this.showConfirmModal = true;
+    this.cdr.detectChanges();
   }
 
   confirmActionPassword(password: string) {
     if (!password || !this.productTarget || !this.confirmAction) return;
 
-    this.adminPassword = password;
-    this.showConfirmModal = false;
-
     if (this.confirmAction === 'delete') {
+      this.showConfirmModal = false;
       this.executeDelete(password);
       return;
     }
 
     if (this.confirmAction === 'edit') {
-      this.showEditModal = true;
-      this.cdr.detectChanges();
+      this.service.verifyAdminPassword(password).subscribe({
+        next: () => {
+          this.adminPassword = password;
+          this.showConfirmModal = false;
+          this.showEditModal = true;
+          this.cdr.detectChanges();
+        },
+        error: (err) => {
+          this.showConfirmModal = false;
+          this.alertMessage = err?.status === 403
+            ? 'Senha de administrador invalida!'
+            : 'Erro ao validar senha de administrador!';
+          this.showAlertModal = true;
+          this.productTarget = undefined;
+          this.confirmAction = undefined;
+          this.adminPassword = '';
+          this.cdr.detectChanges();
+        }
+      });
     }
   }
 
@@ -103,6 +119,7 @@ export class ProductsListComponent implements OnInit {
         this.productTarget = undefined;
         this.confirmAction = undefined;
         this.adminPassword = '';
+        this.cdr.detectChanges();
       }
     });
   }
@@ -127,7 +144,12 @@ export class ProductsListComponent implements OnInit {
         this.alertMessage = err?.status === 403
           ? 'Senha de administrador invalida!'
           : 'Erro ao atualizar produto!';
+        this.showEditModal = false;
+        this.productTarget = undefined;
+        this.confirmAction = undefined;
+        this.adminPassword = '';
         this.showAlertModal = true;
+        this.cdr.detectChanges();
       }
     });
   }
@@ -137,6 +159,7 @@ export class ProductsListComponent implements OnInit {
     this.adminPassword = '';
     this.productTarget = undefined;
     this.confirmAction = undefined;
+    this.cdr.detectChanges();
   }
 
   applyFilters() {

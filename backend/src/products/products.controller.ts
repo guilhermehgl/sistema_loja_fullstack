@@ -28,6 +28,11 @@ export class ProductsController {
     return this.service.delete(id, dto.adminPassword);
   }
 
+  @Post('admin/verify')
+  verifyAdmin(@Body() dto: AdminPasswordDto) {
+    return this.service.validateAdminPassword(dto.adminPassword);
+  }
+
   @Patch(':id/price')
   updatePrice(
     @Param('id') id: string,

@@ -39,7 +39,10 @@ describe('ProductsService', () => {
     const patchReq = httpMock.expectOne(`${api}/p1`);
     expect(patchReq.request.method).toBe('PATCH');
     expect(patchReq.request.body).toEqual({
-      ...product,
+      name: product.name,
+      barcode: product.barcode,
+      quantity: product.quantity,
+      price: product.price,
       adminPassword: 'admin123',
     });
     patchReq.flush(product);

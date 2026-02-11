@@ -67,6 +67,11 @@ export class ProductsService {
     return this.repository.delete(id);
   }
 
+  validateAdminPassword(adminPassword: string) {
+    this.assertAdminPassword(adminPassword);
+    return { valid: true as const };
+  }
+
   private assertAdminPassword(adminPassword: string): void {
     const configuredHash = process.env.ADMIN_PASSWORD_HASH?.trim().toLowerCase();
     const configuredPlain = process.env.ADMIN_PASSWORD;

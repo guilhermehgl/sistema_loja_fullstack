@@ -9,6 +9,7 @@ import {
   ValidationErrors
 } from '@angular/forms';
 import { ProductsService } from '../../../../core/services/products.service';
+import { AlertModalComponent } from '../../../../shared/components/modal/alert-modal/alert-modal.component';
 
 type ProductFormControls = {
   name: AbstractControl;
@@ -20,11 +21,13 @@ type ProductFormControls = {
 @Component({
   selector: 'app-products-form',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, AlertModalComponent],
   templateUrl: './products-form.component.html',
 })
 export class ProductsFormComponent {
   form: FormGroup;
+  showAlertModal = false;
+  alertMessage = '';
 
   constructor(
     private fb: FormBuilder,
@@ -190,7 +193,8 @@ export class ProductsFormComponent {
       },
       error: (err) => {
         console.error('Erro ao salvar produto:', err);
-        alert('Erro ao salvar produto (ver console/backend)');
+        this.alertMessage = 'Erro ao salvar produto. Verifique os dados e tente novamente.';
+        this.showAlertModal = true;
       }
     });
   }

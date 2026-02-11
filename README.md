@@ -12,7 +12,7 @@ Aplicacao fullstack para gestao de produtos e registro de vendas.
 
 - `frontend/`: interface web, formularios, lista de produtos e fluxo de venda.
 - `backend/`: API REST com modulos `products` e `orders`.
-- `docker/`: reservado para infraestrutura local.
+- `docker-compose.yml`: sobe API + PostgreSQL.
 
 ## Funcionalidades atuais
 
@@ -21,7 +21,7 @@ Aplicacao fullstack para gestao de produtos e registro de vendas.
 - Exclusao e edicao de produto com autenticacao administrativa.
 - Registro de venda com controle de estoque e transacao no backend.
 
-## Como rodar localmente
+## Como rodar localmente (sem Docker)
 
 1. Backend
 ```bash
@@ -37,7 +37,23 @@ npm install
 npm start
 ```
 
-App frontend: `http://localhost:4200`  
+## Subir com Docker (um comando)
+
+1. Copie o arquivo de ambiente:
+```bash
+# Linux/macOS
+cp .env.example .env
+
+# Windows PowerShell
+Copy-Item .env.example .env
+```
+
+2. Suba os servicos (frontend + backend + banco):
+```bash
+docker compose up --build
+```
+
+Frontend: `http://localhost:4200`  
 API backend: `http://localhost:3000`
 
 ## Variaveis de ambiente (backend)
@@ -71,6 +87,5 @@ Use o valor em `ADMIN_PASSWORD_HASH`.
 
 ## Proximos passos recomendados
 
-- Adicionar `docker-compose` para API + banco.
 - Configurar pipeline CI para lint e testes.
 - Publicar demo (frontend + backend) e incluir screenshots/GIF no README.
