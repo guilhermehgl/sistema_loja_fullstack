@@ -1,29 +1,55 @@
 # Backend - Sistema Loja
 
-API REST em NestJS para gestao de produtos e registro de pedidos/vendas.
+API REST em NestJS para gestao de produtos e registro de vendas.
 
-## Modulos
+## Visao Geral
 
-- `products`: CRUD de produtos e operacoes administrativas.
-- `orders`: criacao de pedido com baixa de estoque em transacao.
+Este backend centraliza:
 
-## Requisitos
+- cadastro e consulta de produtos;
+- atualizacao e exclusao com credencial administrativa;
+- criacao de pedidos com baixa de estoque;
+- healthcheck para monitoramento basico.
 
-- Node.js 20+
+## Stack
+
+- NestJS 11
+- TypeORM
 - PostgreSQL
+- Class Validator / Class Transformer
+- Jest + Supertest
 
-## Instalar e executar
+## Estrutura
 
-```bash
-npm install
-npm run start:dev
-```
+- `src/products/`: modulo de produtos (controller, service, entidade e DTOs).
+- `src/orders/`: modulo de pedidos/vendas com transacao.
+- `src/main.ts`: bootstrap da aplicacao (CORS e validacao global).
+- `test/`: testes e2e.
 
-API em `http://localhost:3000`.
+## Endpoints Principais
 
-## Variaveis de ambiente
+### Health
 
-Copie `.env.example` para `.env`:
+- `GET /health`
+
+### Products
+
+- `GET /products`
+- `POST /products`
+- `PATCH /products/:id`
+- `PATCH /products/:id/price`
+- `DELETE /products/:id`
+- `POST /products/admin/verify`
+
+### Orders
+
+- `POST /orders`
+
+## Como Rodar
+
+### Desenvolvimento local (sem Docker)
+
+1. Copie o arquivo de ambiente:
 
 ```bash
 # Linux/macOS
@@ -33,7 +59,26 @@ cp .env.example .env
 Copy-Item .env.example .env
 ```
 
-Use este formato:
+2. Instale dependencias e execute:
+
+```bash
+npm install
+npm run start:dev
+```
+
+API em `http://localhost:3000`.
+
+### Via Docker Compose (stack completa)
+
+Na raiz do projeto:
+
+```bash
+docker compose up --build
+```
+
+## Variaveis de Ambiente
+
+Exemplo (`.env` local no backend):
 
 ```env
 DB_HOST=localhost
@@ -42,33 +87,34 @@ DB_USER=postgres
 DB_PASS=postgres
 DB_NAME=sistema_loja
 
+TYPEORM_SYNC=true
+TYPEORM_LOGGING=true
+
 ADMIN_PASSWORD_HASH=
-# ADMIN_PASSWORD= # fallback apenas para desenvolvimento
-
-TYPEORM_SYNC=false
-TYPEORM_LOGGING=false
+# ADMIN_PASSWORD=admin123
 ```
 
-## Executar com Docker Compose
-
-Na raiz do projeto:
-
-```bash
-docker compose up --build
-```
+Observacao: para desenvolvimento local, `TYPEORM_SYNC=true` acelera o setup. Em producao, prefira `TYPEORM_SYNC=false` com migracoes.
 
 ## Scripts
 
-- `npm run start:dev`: desenvolvimento com watch.
-- `npm run build`: build de producao.
-- `npm run lint`: lint do projeto.
+- `npm run start:dev`: desenvolvimento com hot reload.
+- `npm run build`: build da aplicacao.
+- `npm run lint`: lint do codigo.
 - `npm run test`: testes unitarios.
 - `npm run test:e2e`: testes e2e.
+- `npm run dev`: sobe stack Docker completa (usando `../docker-compose.yml`).
+- `npm run down`: derruba stack Docker.
+- `npm run logs`: exibe logs da stack Docker.
 
-## Endpoints principais
+## Qualidade
 
-- `GET /products`
-- `POST /products`
-- `PATCH /products/:id`
-- `DELETE /products/:id`
-- `POST /orders`
+- `ValidationPipe` global com `whitelist`, `forbidNonWhitelisted` e `transform`.
+- Tratamento de excecoes HTTP para validacoes de negocio.
+- Fluxo de venda com transacao para manter consistencia de estoque e pedido.
+
+## Melhorias Futuras
+
+- Adicionar migracoes versionadas de banco.
+- Aplicar rate limit nas rotas administrativas.
+- Expandir cobertura de testes e2e para fluxo completo de produtos e pedidos.

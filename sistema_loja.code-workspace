@@ -7,9 +7,6 @@
     {
       "name": "Frontend (Angular)",
       "path": "frontend"
-    },
-    {"name": "Docker",
-      "path": "docker"
     }
   ]
 }

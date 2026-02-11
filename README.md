@@ -1,45 +1,61 @@
 # Sistema Loja
 
-Aplicacao fullstack para gestao de produtos e registro de vendas.
+Webapp fullstack para gestao de estoque e registro de vendas, desenvolvido como projeto de portfolio.
 
-## Stack
+## Visao Geral
+
+O sistema permite cadastrar produtos por codigo de barras, controlar estoque, editar/excluir itens com autenticacao administrativa e registrar vendas com baixa de estoque em transacao no backend.
+
+## Demo
+
+- Frontend: `http://localhost:4200`
+- Backend: `http://localhost:3000`
+- Healthcheck: `GET http://localhost:3000/health`
+
+## Stack Tecnica
 
 - Frontend: Angular 21 (standalone components)
 - Backend: NestJS 11 + TypeORM
-- Banco: PostgreSQL
+- Banco de dados: PostgreSQL 16
+- Infra local: Docker Compose
+- Testes: Jest (backend) e Vitest (frontend)
 
-## Estrutura
+## Arquitetura
 
-- `frontend/`: interface web, formularios, lista de produtos e fluxo de venda.
-- `backend/`: API REST com modulos `products` e `orders`.
-- `docker-compose.yml`: sobe API + PostgreSQL.
+### Frontend (`frontend/`)
 
-## Funcionalidades atuais
-
-- Cadastro e atualizacao de produtos por codigo de barras.
+- Pagina principal de produtos.
+- Cadastro de itens.
 - Listagem com busca, ordenacao e paginacao.
-- Exclusao e edicao de produto com autenticacao administrativa.
-- Registro de venda com controle de estoque e transacao no backend.
+- Edicao e exclusao com senha administrativa.
+- Fluxo de venda em modal com carrinho.
 
-## Como rodar localmente (sem Docker)
+### Backend (`backend/`)
 
-1. Backend
-```bash
-cd backend
-npm install
-npm run start:dev
-```
+- Modulo `products`: cadastro, listagem, edicao, exclusao e verificacao de credencial admin.
+- Modulo `orders`: criacao de pedido com transacao e baixa de estoque.
+- `ValidationPipe` global com `whitelist`, `forbidNonWhitelisted` e `transform`.
 
-2. Frontend
-```bash
-cd frontend
-npm install
-npm start
-```
+### Banco
 
-## Subir com Docker (um comando)
+- Tabelas principais:
+- `products`
+- `orders`
+- `order_items`
 
-1. Copie o arquivo de ambiente:
+## Regras de Negocio Implementadas
+
+- Produto com mesmo `barcode` incrementa quantidade em vez de duplicar cadastro.
+- Venda so e concluida se houver estoque suficiente para todos os itens.
+- Exclusao e edicao exigem credencial administrativa.
+- Registro de venda e baixa de estoque rodam em transacao no backend.
+
+## Como Executar
+
+### Opcao 1: Docker (recomendado)
+
+1. Copie o arquivo de ambiente na raiz:
+
 ```bash
 # Linux/macOS
 cp .env.example .env
@@ -48,17 +64,51 @@ cp .env.example .env
 Copy-Item .env.example .env
 ```
 
-2. Suba os servicos (frontend + backend + banco):
+2. Suba toda a stack:
+
 ```bash
 docker compose up --build
 ```
 
-Frontend: `http://localhost:4200`  
-API backend: `http://localhost:3000`
+### Opcao 2: Execucao local sem Docker
 
-## Variaveis de ambiente (backend)
+1. Backend:
 
-Crie `backend/.env` com:
+```bash
+cd backend
+npm install
+npm run start:dev
+```
+
+2. Frontend:
+
+```bash
+cd frontend
+npm install
+npm start
+```
+
+## Variaveis de Ambiente
+
+Observacao: `TYPEORM_SYNC=true` e recomendado apenas para desenvolvimento local. Em ambiente de producao, prefira `TYPEORM_SYNC=false` com migracoes.
+
+### Raiz (`.env`) - usado pelo Docker Compose
+
+```env
+DB_NAME=sistema_loja
+DB_USER=postgres
+DB_PASS=postgres
+
+PORT=3000
+FRONTEND_PORT=4200
+TYPEORM_SYNC=true
+TYPEORM_LOGGING=true
+
+ADMIN_PASSWORD_HASH=
+# ADMIN_PASSWORD=admin123
+```
+
+### Backend local (`backend/.env`) - sem Docker
 
 ```env
 DB_HOST=localhost
@@ -67,25 +117,64 @@ DB_USER=postgres
 DB_PASS=postgres
 DB_NAME=sistema_loja
 
-# Recomendado para demos publicas (sha256 em hex)
+TYPEORM_SYNC=true
+TYPEORM_LOGGING=true
+
 ADMIN_PASSWORD_HASH=
-
-# Apenas para desenvolvimento local
-# ADMIN_PASSWORD=
-
-TYPEORM_SYNC=false
-TYPEORM_LOGGING=false
+# ADMIN_PASSWORD=admin123
 ```
 
-## Gerar hash da senha admin
+### Gerar hash da senha admin
 
 ```bash
 node -e "console.log(require('node:crypto').createHash('sha256').update('sua_senha').digest('hex'))"
 ```
 
-Use o valor em `ADMIN_PASSWORD_HASH`.
+## Scripts Principais
 
-## Proximos passos recomendados
+### Backend (`backend/package.json`)
 
-- Configurar pipeline CI para lint e testes.
-- Publicar demo (frontend + backend) e incluir screenshots/GIF no README.
+- `npm run dev`: sobe stack completa via Docker Compose.
+- `npm run down`: derruba stack Docker.
+- `npm run logs`: acompanha logs da stack.
+- `npm run test`: testes unitarios backend.
+- `npm run test:e2e`: testes e2e backend.
+
+### Frontend (`frontend/package.json`)
+
+- `npm start`: servidor de desenvolvimento Angular.
+- `npm run build`: build de producao.
+- `npm test -- --watch=false`: testes frontend em modo nao interativo.
+
+## Endpoints Principais
+
+### Products
+
+- `GET /products`
+- `POST /products`
+- `PATCH /products/:id`
+- `PATCH /products/:id/price`
+- `DELETE /products/:id`
+- `POST /products/admin/verify`
+
+### Orders
+
+- `POST /orders`
+
+### Health
+
+- `GET /health`
+
+## Qualidade e Testes
+
+- Backend com testes unitarios para service/controller de produtos.
+- Backend com teste e2e de healthcheck.
+- Frontend com testes de servicos HTTP de produtos e pedidos.
+
+## Melhorias Futuras
+
+- Migracoes de banco (em vez de sincronizacao automatica).
+- Rate limit para rotas administrativas.
+- CI com lint + testes no GitHub Actions.
+- Observabilidade (logs estruturados e monitoramento basico).
+- Screenshots/GIF de demonstracao no README.
