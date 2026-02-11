@@ -28,6 +28,7 @@ export class OrdersService {
   createOrder(dto: CreateOrderDto) {
     return this.http.post(this.API, dto).pipe(
       tap(() => {
+        // Pedido concluido altera estoque; forca recarga dos produtos na UI.
         this.productsService.load();
       })
     );

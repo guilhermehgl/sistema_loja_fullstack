@@ -21,6 +21,7 @@ export class ProductsPage {
   showProductInfoModal = false;
   scannedProduct?: Product;
 
+  // Container da pagina: injeta estado global de produtos para os componentes filhos.
   constructor(private productsService: ProductsService) {}
 
 }

@@ -42,11 +42,13 @@ describe('OrdersService', () => {
 
     service.createOrder(dto).subscribe();
 
+    // Confirma contrato HTTP do endpoint de pedidos.
     const req = httpMock.expectOne('http://localhost:3000/orders');
     expect(req.request.method).toBe('POST');
     expect(req.request.body).toEqual(dto);
     req.flush({ id: 'o1' });
 
+    // Venda concluida precisa atualizar estoque visivel no frontend.
     expect(productsServiceMock.load).toHaveBeenCalledTimes(1);
   });
 });

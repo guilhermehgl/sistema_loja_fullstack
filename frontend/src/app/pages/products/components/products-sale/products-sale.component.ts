@@ -21,10 +21,12 @@ export class ProductsSaleComponent {
   saleTotal = 0;
 
   openSale() {
+    // Abre modal de venda mantendo a logica de carrinho encapsulada no componente filho.
     this.showSaleModal = true;
   }
 
   onSaleSuccess(total: number) {
+    // Exibe feedback com valor final apos venda concluida.
     this.saleTotal = total;
     this.showAlertModal = true;
   }

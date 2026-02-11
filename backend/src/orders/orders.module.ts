@@ -6,6 +6,7 @@ import { Order } from './orders.entity';
 import { OrderItem } from './order-item.entity';
 import { Product } from '../products/products.entity';
 
+// Módulo de pedidos: expõe controller e service com acesso às entidades necessárias.
 @Module({
   imports: [
     TypeOrmModule.forFeature([Order, OrderItem, Product]),

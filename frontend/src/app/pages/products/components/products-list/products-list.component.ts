@@ -19,15 +19,12 @@ export class ProductsListComponent implements OnInit {
   filteredProducts: Product[] = [];
   processedProducts: Product[] = [];
 
-
+  // Estado de busca, ordenacao e paginacao exibido na lista.
   searchTerm: string = '';
-
 
   pageSize: number = 20;
 
-
   sortBy: 'barcode' | 'name' = 'barcode';
-
 
   currentPage: number = 1;
   totalPages: number = 1;
@@ -44,8 +41,9 @@ export class ProductsListComponent implements OnInit {
   constructor(private service: ProductsService, private cdr: ChangeDetectorRef) {}
 
   get allBarcodes(): string[] {
-  return this.products.map(p => p.barcode?.toString() || '');
-}
+    // Usado no modal de edicao para impedir conflito de codigo de barras.
+    return this.products.map(p => p.barcode?.toString() || '');
+  }
 
   ngOnInit() {
     this.service.products$.subscribe((data) => {
@@ -56,6 +54,7 @@ export class ProductsListComponent implements OnInit {
   }
 
   openConfirmModal(product: Product, action: ConfirmAction) {
+    // Unifica o ponto de entrada para fluxos sensiveis: edicao e exclusao.
     this.productTarget = product;
     this.confirmAction = action;
     this.showConfirmModal = true;
@@ -72,6 +71,7 @@ export class ProductsListComponent implements OnInit {
     }
 
     if (this.confirmAction === 'edit') {
+      // Edicao exige validacao previa da senha antes de abrir o formulario.
       this.service.verifyAdminPassword(password).subscribe({
         next: () => {
           this.adminPassword = password;
@@ -97,6 +97,7 @@ export class ProductsListComponent implements OnInit {
   private executeDelete(password: string) {
     if (!this.productTarget) return;
 
+    // Exclusao e feita no backend com senha administrativa.
     this.service.deleteProduct(this.productTarget.id, password).subscribe({
       next: () => {
         this.products = this.products.filter(p => p.id !== this.productTarget!.id);
@@ -173,6 +174,7 @@ export class ProductsListComponent implements OnInit {
       );
     }
 
+    // Ordena sempre apos filtro para manter pagina consistente entre navegacoes.
     result.sort((a, b) => this.sortBy === 'barcode' ? Number(a.barcode) - Number(b.barcode) : a.name.localeCompare(b.name));
 
     this.processedProducts = result;
@@ -183,6 +185,7 @@ export class ProductsListComponent implements OnInit {
     const startIndex = (this.currentPage - 1) * pageSize;
     const endIndex = startIndex + pageSize;
 
+    // Slice final representa apenas os itens da pagina atual.
     this.filteredProducts = this.processedProducts.slice(startIndex, endIndex);
   }
 

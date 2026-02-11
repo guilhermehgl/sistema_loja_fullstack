@@ -16,6 +16,7 @@ export class AlertModalComponent {
   @Output() close = new EventEmitter<void>();
 
   handleClose() {
+    // Mantem contrato simples de fechamento para o componente pai.
     this.close.emit();
   }
 }

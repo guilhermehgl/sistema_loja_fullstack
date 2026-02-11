@@ -33,7 +33,7 @@ export class ProductsFormComponent {
     private fb: FormBuilder,
     private service: ProductsService
   ) {
-    // Formulário reativo com validações padrão + validação customizada de regra de negócio
+    // Produto novo exige nome; para barcode existente, o nome pode ser omitido.
     this.form = this.fb.group(
       {
         name: [
@@ -47,7 +47,8 @@ export class ProductsFormComponent {
           '',
           [
             Validators.required,
-            Validators.pattern(/^\d{8}$/), // Código de barras obrigatório com exatamente 8 dígitos
+            // Barcode interno com 8 digitos numericos fixos.
+            Validators.pattern(/^\d{8}$/),
           ],
         ],
         quantity: [
@@ -56,33 +57,31 @@ export class ProductsFormComponent {
             Validators.min(0),
             Validators.max(999999),
             Validators.required,
-            Validators.pattern(/^\d{1,6}$/), // Quantidade limitada a 6 dígitos
+            // Mantem validacao alinhada com a mascara de entrada (1 a 6 digitos).
+            Validators.pattern(/^\d{1,6}$/),
           ],
         ],
         price: [
           '',
           [
             Validators.required,
-            Validators.pattern(/^\d+([.,]\d{1,2})?$/), // Permite decimal com ponto ou vírgula (até 2 casas)
+            // Aceita virgula ou ponto como separador decimal, com ate 2 casas.
+            Validators.pattern(/^\d+([.,]\d{1,2})?$/),
           ],
         ],
       },
       {
-        validators: this.nameRequiredIfBarcodeNotExists(), // Regra customizada aplicada ao formulário inteiro
+        validators: this.nameRequiredIfBarcodeNotExists(),
       }
     );
   }
 
-  /**
-   * Validação customizada:
-   * Se o código de barras NÃO existir no sistema, então o nome passa a ser obrigatório.
-   * Isso permite reaproveitar cadastro automático por barcode.
-   */
   nameRequiredIfBarcodeNotExists() {
     return (group: AbstractControl): ValidationErrors | null => {
       const barcode = group.get('barcode')?.value;
       const name = group.get('name')?.value;
 
+      // Valida em memoria para evitar chamada de API durante digitacao.
       const exists = this.service.existsByBarcode(barcode);
 
       if (!exists && (!name || name.trim().length === 0)) {
@@ -93,13 +92,10 @@ export class ProductsFormComponent {
     };
   }
 
-  /**
-   * Permite somente números em inputs específicos e limita o tamanho máximo.
-   * Usado para garantir que o usuário não digite caracteres inválidos.
-   */
   onlyNumbers(event: Event, maxLength: number) {
     const input = event.target as HTMLInputElement;
 
+    // Normaliza no input para manter UI e FormControl sincronizados.
     input.value = input.value
       .replace(/\D/g, '')
       .slice(0, maxLength);
@@ -107,32 +103,24 @@ export class ProductsFormComponent {
     this.form.get(input.getAttribute('formControlName')!)?.setValue(input.value);
   }
 
-  /**
-   * Máscara para preço permitindo apenas números e separador decimal (vírgula ou ponto).
-   * Evita que o usuário insira caracteres inválidos.
-   */
   priceMask(event: Event) {
     const input = event.target as HTMLInputElement;
 
+    // Permite apenas um separador decimal (virgula ou ponto).
     input.value = input.value
-      .replace(/[^0-9.,]/g, '')     // remove tudo que não for número, ponto ou vírgula
-      .replace(/(,.*),/g, '$1')     // impede múltiplas vírgulas
-      .replace(/(\..*)\./g, '$1');  // impede múltiplos pontos
+      .replace(/[^0-9.,]/g, '')
+      .replace(/(,.*),/g, '$1')
+      .replace(/(\..*)\./g, '$1');
 
     this.form.get('price')?.setValue(input.value);
   }
 
-  /**
-   * Normaliza o valor do preço antes de salvar:
-   * - troca vírgula por ponto
-   * - valida parseFloat
-   * - fixa em 2 casas decimais
-   */
   normalizePrice() {
     let value = this.form.get('price')?.value;
 
     if (!value) return;
 
+    // Padroniza para decimal JS antes de validar e formatar.
     value = value.replace(',', '.');
 
     const number = parseFloat(value);
@@ -145,45 +133,36 @@ export class ProductsFormComponent {
     this.form.get('price')?.setValue(number.toFixed(2));
   }
 
-  /**
-   * Máscara para quantidade:
-   * - apenas números
-   * - máximo de 6 dígitos
-   * - converte para Number no FormControl
-   */
   quantityMask(event: Event) {
     const input = event.target as HTMLInputElement;
-
     const value = input.value.replace(/\D/g, '').slice(0, 6);
 
     input.value = value;
 
+    // Evita reprocessar mascara ao atualizar o controle por codigo.
     this.form.get('quantity')?.setValue(
       value === '' ? null : Number(value),
-      { emitEvent: false } // evita disparar eventos de mudança desnecessários
+      { emitEvent: false }
     );
   }
 
-  /**
-   * Envia o formulário para o backend após validação.
-   * Normaliza o preço para formato numérico antes de enviar.
-   */
   save() {
     if (this.form.invalid) {
+      // Exibe feedback imediato para todos os campos invalidos no submit.
       this.form.markAllAsTouched();
       return;
     }
 
     const raw = this.form.value;
-
     const payload = {
       ...raw,
-      price: Number(raw.price.replace(',', '.')), // converte para número no formato aceito pelo backend
+      // Backend espera numero; converte entrada local para decimal JS.
+      price: Number(raw.price.replace(',', '.')),
     };
 
     this.service.create(payload).subscribe({
       next: () => {
-        // Reset completo do formulário após salvar
+        // Mantem reset explicito para evitar depender de defaults implicitos.
         this.form.reset({
           name: '',
           barcode: '',
@@ -192,6 +171,7 @@ export class ProductsFormComponent {
         });
       },
       error: (err) => {
+        // Console para diagnostico tecnico; modal para mensagem amigavel.
         console.error('Erro ao salvar produto:', err);
         this.alertMessage = 'Erro ao salvar produto. Verifique os dados e tente novamente.';
         this.showAlertModal = true;
@@ -199,23 +179,15 @@ export class ProductsFormComponent {
     });
   }
 
-  // Getter para facilitar acesso aos controles no HTML
   get f(): ProductFormControls {
     return this.form.controls as ProductFormControls;
   }
 
-  /**
-   * Retorna se um controle específico possui determinado erro,
-   * considerando se ele já foi tocado.
-   */
   hasError(controlName: keyof ProductFormControls, error: string): boolean {
     const control = this.f[controlName];
     return !!(control.touched && control.errors && control.errors[error]);
   }
 
-  /**
-   * Retorna se o formulário possui determinado erro global (validação customizada).
-   */
   formHasError(error: string): boolean {
     return !!(this.form.touched && this.form.errors && this.form.errors[error]);
   }

@@ -23,10 +23,12 @@ export class ConfirmModalComponent {
 
 handleConfirm() {
   if (!this.value.trim()) {
+    // Evita confirmar acao sensivel com campo vazio.
     this.error = true;
     return;
   }
 
+  // Remove espacos acidentais para validar senha/texto real informado.
   this.confirm.emit(this.value.trim());
 }
 }

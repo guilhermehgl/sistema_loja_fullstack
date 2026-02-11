@@ -5,6 +5,7 @@ import { ProductsService } from './products.service';
 describe('ProductsController', () => {
   let controller: ProductsController;
 
+  // Mock simples para validar se o controller delega corretamente para o service.
   const serviceMock = {
     create: jest.fn(),
     findAll: jest.fn(),

@@ -43,6 +43,7 @@ export class SaleModalComponent implements OnInit {
   ) { }
 
   ngOnInit() {
+    // Reage a atualizacoes de estoque para manter a busca e selecao consistentes.
     this.productsService.products$.subscribe(products => {
       this.products = products;
       this.filter();
@@ -50,6 +51,7 @@ export class SaleModalComponent implements OnInit {
   }
 
   filter() {
+    // Limita resultados para manter modal objetivo durante a busca.
     this.visibleProducts = this.products
       .filter(p =>
         p.name.toLowerCase().includes(this.search.toLowerCase()) ||
@@ -69,6 +71,7 @@ export class SaleModalComponent implements OnInit {
         item.quantity++;
       }
     } else {
+      // Armazena estoque inicial no carrinho para impedir venda acima do limite.
       this.cart.push({
         productId: product.id,
         name: product.name,
@@ -92,6 +95,7 @@ export class SaleModalComponent implements OnInit {
   }
 
   onQuantityChange(item: CartItem) {
+    // Normaliza para inteiro e respeita limites [1..stock].
     item.quantity = Math.floor(Number(item.quantity));
 
     if (item.quantity < 1) {
@@ -130,6 +134,7 @@ export class SaleModalComponent implements OnInit {
   }
 
   blockInvalidKeys(event: KeyboardEvent) {
+    // Input numerico nao deve aceitar notacao cientifica nem sinais.
     if (['e', 'E', '+', '-', '.', ','].includes(event.key)) {
       event.preventDefault();
     }
@@ -164,6 +169,7 @@ export class SaleModalComponent implements OnInit {
     this.loading = true;
     this.errorMessage = '';
 
+    // DTO enviado ao backend inclui apenas dados necessarios para baixa de estoque.
     const dto = {
       items: this.cart.map(item => ({
         productId: item.productId,

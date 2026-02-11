@@ -7,6 +7,7 @@ import {
   Index,
 } from 'typeorm';
 
+// Entidade de produto com dados de identificação, estoque e preço.
 @Entity('products')
 export class Product {
   @PrimaryGeneratedColumn('uuid')
@@ -16,6 +17,7 @@ export class Product {
   name: string;
 
   @Index({ unique: true })
+  // Barcode único evita duplicidade de cadastro para o mesmo item comercial.
   @Column({ length: 8 })
   barcode: string;
 

@@ -36,6 +36,7 @@ describe('ProductsService', () => {
 
     service.updateProduct(product, 'admin123').subscribe();
 
+    // Garante que a senha admin faz parte do contrato de atualizacao.
     const patchReq = httpMock.expectOne(`${api}/p1`);
     expect(patchReq.request.method).toBe('PATCH');
     expect(patchReq.request.body).toEqual({
@@ -47,6 +48,7 @@ describe('ProductsService', () => {
     });
     patchReq.flush(product);
 
+    // Apos mutacao, o service deve recarregar a lista local.
     const reloadReq = httpMock.expectOne(api);
     expect(reloadReq.request.method).toBe('GET');
     reloadReq.flush([product]);

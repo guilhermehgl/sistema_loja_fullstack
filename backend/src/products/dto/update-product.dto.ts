@@ -1,6 +1,7 @@
 import { IsInt, IsNumber, IsOptional, IsString, Length, Min } from 'class-validator';
 import { AdminPasswordDto } from './admin-password.dto';
 
+// Atualização parcial de produto herdando a senha administrativa obrigatória.
 export class UpdateProductDto extends AdminPasswordDto {
   @IsOptional()
   @IsString()

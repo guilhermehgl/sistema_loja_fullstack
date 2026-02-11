@@ -5,6 +5,7 @@ import { RouterOutlet } from '@angular/router';
   selector: 'app-root',
   standalone: true,
   imports: [RouterOutlet],
+  // Componente shell: somente projeta as rotas.
   template: `
     <router-outlet></router-outlet>
   `

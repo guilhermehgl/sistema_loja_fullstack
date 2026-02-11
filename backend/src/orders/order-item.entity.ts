@@ -8,6 +8,7 @@ import {
 import { Product } from '../products/products.entity';
 import { Order } from './orders.entity';
 
+// Item individual de um pedido, mantendo referência ao produto e preço no momento da venda.
 @Entity('order_items')
 export class OrderItem {
   @PrimaryGeneratedColumn('uuid')
@@ -29,5 +30,6 @@ export class OrderItem {
   quantity: number;
 
   @Column('decimal', { precision: 10, scale: 2 })
+  // Snapshot de preço para preservar histórico mesmo após reajustes no produto.
   price: number;
 }

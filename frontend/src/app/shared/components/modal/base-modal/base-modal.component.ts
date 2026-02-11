@@ -15,6 +15,7 @@ export class BaseModalComponent {
   @Output() cancel = new EventEmitter<void>();
 
   onCancel() {
+    // Evento padrao para fechar modal sem acao de confirmacao.
     this.cancel.emit();
   }
 }

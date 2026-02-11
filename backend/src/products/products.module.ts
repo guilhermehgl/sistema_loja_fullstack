@@ -4,6 +4,7 @@ import { ProductsController } from './products.controller';
 import { ProductsService } from './products.service';
 import { Product } from './products.entity';
 
+// Módulo de produtos com registro de controller, service e repositório TypeORM.
 @Module({
   imports: [TypeOrmModule.forFeature([Product])],
   controllers: [ProductsController],

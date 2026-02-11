@@ -22,6 +22,7 @@ export class EditProductModalComponent implements OnInit {
     constructor(private fb: FormBuilder, private cdr: ChangeDetectorRef) { }
 
     ngOnInit() {
+        // Inicializa formulario com snapshot atual do produto selecionado.
         this.form = this.fb.group({
             name: [this.product.name || '', [Validators.required, Validators.minLength(4), Validators.maxLength(30)]],
             barcode: [
@@ -42,6 +43,7 @@ export class EditProductModalComponent implements OnInit {
             ]
         });
 
+        // Garante renderizacao correta do modal apos inicializacao do formulario.
         setTimeout(() => this.cdr.detectChanges());
     }
 
@@ -49,6 +51,7 @@ export class EditProductModalComponent implements OnInit {
         const value = control.value;
         if (!value) return null;
     
+        // Permite manter o proprio codigo do produto em edicao sem falso positivo.
         const exists = this.existingBarcodes.includes(value) && value !== this.product.barcode;
 
         return exists ? { barcodeExists: true } : null;
@@ -73,6 +76,7 @@ export class EditProductModalComponent implements OnInit {
         if (this.form.invalid) return;
 
         const formValue = this.form.value;
+        // Converte tipos de entrada para o contrato esperado pela API.
         const updated: Product = {
             ...this.product,
             name: formValue.name,

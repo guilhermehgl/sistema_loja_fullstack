@@ -1,5 +1,6 @@
 import { IsInt, IsNumber, IsString, Length, Min } from 'class-validator';
 
+// Payload de entrada para criação de produtos e reposição de estoque.
 export class CreateProductDto {
   @IsString()
   name: string;

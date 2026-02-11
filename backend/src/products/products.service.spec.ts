@@ -7,6 +7,7 @@ import { ProductsService } from './products.service';
 describe('ProductsService', () => {
   let service: ProductsService;
 
+  // Mock de repositório para isolar regras do service em testes unitários.
   const repositoryMock = {
     findOne: jest.fn(),
     findOneBy: jest.fn(),
