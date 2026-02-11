@@ -64,10 +64,11 @@ cp .env.example .env
 Copy-Item .env.example .env
 ```
 
-2. Suba toda a stack:
+2. Navegue até a pasta backend e rode o start:
 
 ```bash
-docker compose up --build
+cd backend
+npm run dev
 ```
 
 ### Opcao 2: Execucao local sem Docker
@@ -77,8 +78,11 @@ docker compose up --build
 ```bash
 cd backend
 npm install
+npm run db:up
 npm run start:dev
 ```
+
+Observacao: `npm run db:up` publica o PostgreSQL em `localhost:5433` para o backend local.
 
 2. Frontend:
 
@@ -112,7 +116,7 @@ ADMIN_PASSWORD_HASH=
 
 ```env
 DB_HOST=localhost
-DB_PORT=5432
+DB_PORT=5433
 DB_USER=postgres
 DB_PASS=postgres
 DB_NAME=sistema_loja
@@ -135,6 +139,8 @@ node -e "console.log(require('node:crypto').createHash('sha256').update('sua_sen
 ### Backend (`backend/package.json`)
 
 - `npm run dev`: sobe stack completa via Docker Compose.
+- `npm run db:up`: sobe somente o banco para desenvolvimento local do backend.
+- `npm run db:down`: para somente o banco.
 - `npm run down`: derruba stack Docker.
 - `npm run logs`: acompanha logs da stack.
 - `npm run test`: testes unitarios backend.

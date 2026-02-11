@@ -48,6 +48,8 @@ npm start
 
 App em `http://localhost:4200`.
 
+Observacao: para usar o frontend local com backend local, suba antes o banco com `npm run db:up` dentro de `backend/` e depois execute `npm run start:dev` no backend.
+
 ### Via Docker Compose (stack completa)
 
 Na raiz do projeto:
