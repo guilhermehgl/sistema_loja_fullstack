@@ -2,6 +2,8 @@ import { Body, Controller, Get, Post, Patch, Param, Delete } from '@nestjs/commo
 import { ProductsService } from './products.service';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdatePriceDto } from "./dto/update-price.dto"
+import { AdminPasswordDto } from './dto/admin-password.dto';
+import { UpdateProductDto } from './dto/update-product.dto';
 
 
 @Controller('products')
@@ -19,11 +21,11 @@ export class ProductsController {
   }
 
   @Delete(':id')
-  handleProduct(
+  deleteProduct(
     @Param('id') id: string,
-    @Body('adminPassword') adminPassword: string,
+    @Body() dto: AdminPasswordDto,
   ) {
-    return this.service.delete(id, adminPassword);
+    return this.service.delete(id, dto.adminPassword);
   }
 
   @Patch(':id/price')
@@ -34,18 +36,12 @@ export class ProductsController {
     return this.service.updatePrice(id, dto.price);
   }
 
-  @Post('validate-password')
-  validatePassword(@Body('password') password: string) {
-    const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD;
-    return { valid: password === ADMIN_PASSWORD };
-  }
-
   @Patch(':id')
   updateProduct(
     @Param('id') id: string,
-    @Body() updatedProduct: Partial<CreateProductDto>
+    @Body() dto: UpdateProductDto,
   ) {
-    return this.service.updateProduct(id, updatedProduct);
+    return this.service.updateProduct(id, dto);
   }
 
 }

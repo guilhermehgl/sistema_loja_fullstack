@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { BehaviorSubject, map, tap } from 'rxjs';
+import { BehaviorSubject, tap } from 'rxjs';
 
 export interface Product {
   id: string;
@@ -37,7 +37,7 @@ export class ProductsService {
   }
 
 
-  handleProduct(productId: string, adminPassword: string) {
+  deleteProduct(productId: string, adminPassword: string) {
     return this.http.delete(`${this.API}/${productId}`, {
       body: { adminPassword }
     }).pipe(
@@ -52,15 +52,12 @@ export class ProductsService {
   }
 
 
-  validateAdminPassword(password: string) {
-    return this.http.post<{ valid: boolean }>(`${this.API}/validate-password`, { password })
-      .pipe(
-        map(res => res.valid)
-      );
-  }
-
-  updateProduct(product: Product) {
-    return this.http.patch<Product>(`${this.API}/${product.id}`, product)
-      .pipe(tap(() => this.load()));
+  updateProduct(product: Product, adminPassword: string) {
+    return this.http.patch<Product>(`${this.API}/${product.id}`, {
+      ...product,
+      adminPassword,
+    }).pipe(
+      tap(() => this.load())
+    );
   }
 }

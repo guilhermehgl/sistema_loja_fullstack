@@ -39,6 +39,7 @@ export class ProductsListComponent implements OnInit {
 
   confirmAction?: ConfirmAction;
   productTarget?: Product;
+  adminPassword = '';
 
   constructor(private service: ProductsService, private cdr: ChangeDetectorRef) {}
 
@@ -63,36 +64,24 @@ export class ProductsListComponent implements OnInit {
   confirmActionPassword(password: string) {
     if (!password || !this.productTarget || !this.confirmAction) return;
 
-    this.service.validateAdminPassword(password).subscribe({
-      next: (valid: boolean) => {
-        this.showConfirmModal = false;
+    this.adminPassword = password;
+    this.showConfirmModal = false;
 
-        if (!valid) {
-          this.alertMessage = 'Senha inválida!';
-          this.showAlertModal = true;
-          this.cdr.detectChanges();
-          return;
-        }
+    if (this.confirmAction === 'delete') {
+      this.executeDelete(password);
+      return;
+    }
 
-        if (this.confirmAction === 'delete') {
-          this.executeDelete(password);
-        } else if (this.confirmAction === 'edit') {
-          this.showEditModal = true;
-          this.cdr.detectChanges();
-        }
-      },
-      error: () => {
-        this.showConfirmModal = false;
-        this.alertMessage = 'Erro ao validar senha!';
-        this.showAlertModal = true;
-      }
-    });
+    if (this.confirmAction === 'edit') {
+      this.showEditModal = true;
+      this.cdr.detectChanges();
+    }
   }
 
   private executeDelete(password: string) {
     if (!this.productTarget) return;
 
-    this.service.handleProduct(this.productTarget.id, password).subscribe({
+    this.service.deleteProduct(this.productTarget.id, password).subscribe({
       next: () => {
         this.products = this.products.filter(p => p.id !== this.productTarget!.id);
         this.applyFilters();
@@ -102,20 +91,24 @@ export class ProductsListComponent implements OnInit {
 
         this.productTarget = undefined;
         this.confirmAction = undefined;
+        this.adminPassword = '';
         this.cdr.detectChanges();
       },
-      error: () => {
-        this.alertMessage = 'Erro ao deletar produto!';
+      error: (err) => {
+        this.alertMessage = err?.status === 403
+          ? 'Senha de administrador invalida!'
+          : 'Erro ao deletar produto!';
         this.showAlertModal = true;
 
         this.productTarget = undefined;
         this.confirmAction = undefined;
+        this.adminPassword = '';
       }
     });
   }
 
   updateProduct(updated: Product) {
-    this.service.updateProduct(updated).subscribe({
+    this.service.updateProduct(updated, this.adminPassword).subscribe({
       next: () => {
         const index = this.products.findIndex(p => p.id === updated.id);
         if (index !== -1) this.products[index] = updated;
@@ -128,12 +121,22 @@ export class ProductsListComponent implements OnInit {
 
         this.productTarget = undefined;
         this.confirmAction = undefined;
+        this.adminPassword = '';
       },
-      error: () => {
-        this.alertMessage = 'Erro ao atualizar produto!';
+      error: (err) => {
+        this.alertMessage = err?.status === 403
+          ? 'Senha de administrador invalida!'
+          : 'Erro ao atualizar produto!';
         this.showAlertModal = true;
       }
     });
+  }
+
+  closeEditModal() {
+    this.showEditModal = false;
+    this.adminPassword = '';
+    this.productTarget = undefined;
+    this.confirmAction = undefined;
   }
 
   applyFilters() {

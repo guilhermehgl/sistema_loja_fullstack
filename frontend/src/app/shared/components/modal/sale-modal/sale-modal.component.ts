@@ -161,9 +161,6 @@ export class SaleModalComponent implements OnInit {
 
     const total = this.total;
 
-    this.success.emit(total);
-    this.close.emit();
-
     this.loading = true;
     this.errorMessage = '';
 
@@ -178,6 +175,7 @@ export class SaleModalComponent implements OnInit {
       next: () => {
         this.cart = [];
         this.loading = false;
+        this.success.emit(total);
         this.close.emit();
       },
       error: err => {

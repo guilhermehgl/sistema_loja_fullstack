@@ -1,18 +1,11 @@
 <div class="container-vender">
   <button class="vender-btn" (click)="open()">
-  Vender
-</button>
+    Vender
+  </button>
 </div>
 
-<app-sale-modal
-  *ngIf="isOpen"
-  (close)="close()"
-  (success)="onSaleSuccess($event)">
+<app-sale-modal *ngIf="isOpen" (close)="close()" (success)="onSaleSuccess($event)">
 </app-sale-modal>
 
-<app-alert-modal
-  *ngIf="showAlertModal"
-  title="Venda concluída"
-  [message]="'Valor total: R$ ' + (saleTotal | number:'1.2-2')"
-  (close)="closeAlert()"
-></app-alert-modal>
+<app-alert-modal *ngIf="showAlertModal" title="Venda concluída"
+  [message]="'Valor total: R$ ' + (saleTotal | number:'1.2-2')" (close)="closeAlert()"></app-alert-modal>

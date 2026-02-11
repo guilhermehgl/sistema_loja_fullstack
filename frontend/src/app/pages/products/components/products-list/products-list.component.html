@@ -75,7 +75,7 @@
 
 
 <app-edit-product-modal *ngIf="showEditModal && productTarget" [product]="productTarget"
-  [existingBarcodes]="allBarcodes" (save)="updateProduct($event)" (cancel)="showEditModal = false">
+  [existingBarcodes]="allBarcodes" (save)="updateProduct($event)" (cancel)="closeEditModal()">
 </app-edit-product-modal>
 
 

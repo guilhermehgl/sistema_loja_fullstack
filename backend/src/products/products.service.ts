@@ -1,8 +1,10 @@
-import { Injectable, ConflictException, ForbiddenException } from '@nestjs/common';
+import { Injectable, ForbiddenException, NotFoundException } from '@nestjs/common';
+import { createHash, timingSafeEqual } from 'node:crypto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Product } from './products.entity';
 import { CreateProductDto } from './dto/create-product.dto';
+import { UpdateProductDto } from './dto/update-product.dto';
 
 @Injectable()
 export class ProductsService {
@@ -34,7 +36,7 @@ export class ProductsService {
     const product = await this.repository.findOneBy({ id });
 
     if (!product) {
-      throw new Error('Produto não encontrado');
+      throw new NotFoundException('Produto nao encontrado');
     }
 
     product.price = price;
@@ -45,9 +47,11 @@ export class ProductsService {
     return this.repository.find();
   }
 
-  async updateProduct(id: string, dto: Partial<CreateProductDto>) {
+  async updateProduct(id: string, dto: UpdateProductDto) {
+    this.assertAdminPassword(dto.adminPassword);
+
     const product = await this.repository.findOneBy({ id });
-    if (!product) throw new Error('Produto não encontrado');
+    if (!product) throw new NotFoundException('Produto nao encontrado');
 
     product.name = dto.name ?? product.name;
     product.barcode = dto.barcode ?? product.barcode;
@@ -58,13 +62,47 @@ export class ProductsService {
   }
 
   delete(id: string, adminPassword: string) {
-    const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD;
-
-    if (adminPassword !== ADMIN_PASSWORD) {
-      throw new ForbiddenException('Senha de administrador inválida');
-    }
+    this.assertAdminPassword(adminPassword);
 
     return this.repository.delete(id);
   }
 
+  private assertAdminPassword(adminPassword: string): void {
+    const configuredHash = process.env.ADMIN_PASSWORD_HASH?.trim().toLowerCase();
+    const configuredPlain = process.env.ADMIN_PASSWORD;
+
+    if (!adminPassword?.trim()) {
+      throw new ForbiddenException('Credenciais administrativas invalidas');
+    }
+
+    if (configuredHash) {
+      const currentHash = createHash('sha256')
+        .update(adminPassword)
+        .digest('hex')
+        .toLowerCase();
+
+      if (!this.constantTimeEqual(currentHash, configuredHash)) {
+        throw new ForbiddenException('Credenciais administrativas invalidas');
+      }
+
+      return;
+    }
+
+    if (configuredPlain && this.constantTimeEqual(adminPassword, configuredPlain)) {
+      return;
+    }
+
+    throw new ForbiddenException('Credenciais administrativas invalidas');
+  }
+
+  private constantTimeEqual(value: string, expected: string): boolean {
+    const currentBuffer = Buffer.from(value);
+    const expectedBuffer = Buffer.from(expected);
+
+    if (currentBuffer.length !== expectedBuffer.length) {
+      return false;
+    }
+
+    return timingSafeEqual(currentBuffer, expectedBuffer);
+  }
 }
