@@ -63,10 +63,13 @@ Copy-Item .env.example .env
 
 ```bash
 npm install
+npm run db:up
 npm run start:dev
 ```
 
 API em `http://localhost:3000`.
+
+Observacao: `npm run db:up` sobe somente o banco PostgreSQL via Docker em `localhost:5433`, sem precisar instalar Postgres no Windows.
 
 ### Via Docker Compose (stack completa)
 
@@ -82,7 +85,7 @@ Exemplo (`.env` local no backend):
 
 ```env
 DB_HOST=localhost
-DB_PORT=5432
+DB_PORT=5433
 DB_USER=postgres
 DB_PASS=postgres
 DB_NAME=sistema_loja
@@ -104,6 +107,8 @@ Observacao: para desenvolvimento local, `TYPEORM_SYNC=true` acelera o setup. Em 
 - `npm run test`: testes unitarios.
 - `npm run test:e2e`: testes e2e.
 - `npm run dev`: sobe stack Docker completa (usando `../docker-compose.yml`).
+- `npm run db:up`: sobe somente o banco via Docker.
+- `npm run db:down`: para somente o banco.
 - `npm run down`: derruba stack Docker.
 - `npm run logs`: exibe logs da stack Docker.
 
