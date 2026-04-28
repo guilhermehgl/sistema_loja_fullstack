@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, map, tap } from 'rxjs';
+import { environment } from '../../../environments/environment';
 
 export interface Product {
   id: string;
@@ -14,7 +15,7 @@ export interface Product {
   providedIn: 'root',
 })
 export class ProductsService {
-  private API = 'http://localhost:3000/products';
+  private API = `${environment.apiUrl}/products`;
 
   private _products$ = new BehaviorSubject<Product[]>([]);
   products$ = this._products$.asObservable();

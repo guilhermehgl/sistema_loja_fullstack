@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { tap } from 'rxjs';
 import { ProductsService } from './products.service';
+import { environment } from '../../../environments/environment';
 
 export interface CreateOrderItem {
   productId: string;
@@ -17,7 +18,7 @@ export interface CreateOrderDto {
 })
 export class OrdersService {
 
-  private API = 'http://localhost:3000/orders';
+  private API = `${environment.apiUrl}/orders`;
 
   constructor(
     private http: HttpClient,
