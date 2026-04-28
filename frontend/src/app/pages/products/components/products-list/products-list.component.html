@@ -25,6 +25,17 @@
 
   <!-- GRID -->
   <div class="list__grid">
+    <div class="list__state" *ngIf="isLoading">Carregando produtos...</div>
+
+    <div class="list__state list__state--error" *ngIf="loadError">
+      <span>{{ loadError }}</span>
+      <button class="btn btn--secondary" (click)="retryLoad()">Tentar novamente</button>
+    </div>
+
+    <div class="list__state" *ngIf="isEmptyState">
+      Nenhum produto encontrado com os filtros atuais.
+    </div>
+
     <div class="card" *ngFor="let product of filteredProducts">
 
       <div class="card__header">
@@ -34,7 +45,7 @@
       <div class="card__body">
         <span class="card__text">Código: {{ product.barcode }}</span>
         <span class="card__text">Quantidade: {{ product.quantity }}</span>
-        <span class="card__text">Preço: R$ {{ product.price | number:'1.2-2' }}</span>
+        <span class="card__text">Preço: {{ product.price | currency:'BRL':'symbol':'1.2-2':'pt-BR' }}</span>
       </div>
 
       <div class="card__actions">
@@ -48,6 +59,10 @@
 
     </div>
   </div>
+
+  <small class="list__feedback" [class.list__feedback--error]="feedbackType === 'error'" *ngIf="feedbackMessage">
+    {{ feedbackMessage }}
+  </small>
 
   <!-- PAGINAÇÃO -->
   <div class="pagination">

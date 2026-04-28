@@ -1,20 +1,22 @@
-import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
-import { CommonModule, DecimalPipe } from '@angular/common';
+import { Component, OnDestroy, OnInit, ChangeDetectorRef } from '@angular/core';
+import { CommonModule, CurrencyPipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ProductsService, Product } from '../../../../core/services/products.service';
 import { ConfirmModalComponent } from '../../../../shared/components/modal/confirm-modal/confirm-modal.component';
 import { AlertModalComponent } from '../../../../shared/components/modal/alert-modal/alert-modal.component';
 import { EditProductModalComponent } from "../../../../shared/components/modal/edit-modal/edit-modal.component"
+import { Subscription } from 'rxjs';
+import { buildProductListState, ProductSortBy } from './products-list-state.util';
 
 type ConfirmAction = 'delete' | 'edit';
 
 @Component({
   selector: 'app-products-list',
   standalone: true,
-  imports: [CommonModule, FormsModule, DecimalPipe, ConfirmModalComponent, AlertModalComponent, EditProductModalComponent],
+  imports: [CommonModule, FormsModule, CurrencyPipe, ConfirmModalComponent, AlertModalComponent, EditProductModalComponent],
   templateUrl: './products-list.component.html',
 })
-export class ProductsListComponent implements OnInit {
+export class ProductsListComponent implements OnInit, OnDestroy {
   products: Product[] = [];
   filteredProducts: Product[] = [];
   processedProducts: Product[] = [];
@@ -26,7 +28,7 @@ export class ProductsListComponent implements OnInit {
   pageSize: number = 20;
 
   // 🔃 Ordenação
-  sortBy: 'barcode' | 'name' = 'barcode';
+  sortBy: ProductSortBy = 'barcode';
 
   // 📄 Paginação
   currentPage: number = 1;
@@ -37,6 +39,13 @@ export class ProductsListComponent implements OnInit {
   showAlertModal = false;
   showEditModal = false;
   alertMessage = '';
+  feedbackMessage = '';
+  feedbackType: 'success' | 'error' = 'success';
+  isLoading = true;
+  loadError = '';
+  loadedOnce = false;
+
+  private subscriptions = new Subscription();
 
   // Estado unificado de ação
   confirmAction?: ConfirmAction;
@@ -45,15 +54,34 @@ export class ProductsListComponent implements OnInit {
   constructor(private service: ProductsService, private cdr: ChangeDetectorRef) {}
 
   get allBarcodes(): string[] {
-  return this.products.map(p => p.barcode?.toString() || '');
-}
+    return this.products.map(p => p.barcode?.toString() || '');
+  }
+
+  get isEmptyState(): boolean {
+    return this.loadedOnce && !this.isLoading && !this.loadError && this.processedProducts.length === 0;
+  }
 
   ngOnInit() {
-    this.service.products$.subscribe((data) => {
+    this.subscriptions.add(this.service.products$.subscribe((data) => {
       this.products = data;
       this.applyFilters();
       this.cdr.markForCheck();
-    });
+    }));
+
+    this.subscriptions.add(this.service.loading$.subscribe((loading) => {
+      this.isLoading = loading;
+      this.cdr.markForCheck();
+    }));
+
+    this.subscriptions.add(this.service.error$.subscribe((error) => {
+      this.loadError = error ?? '';
+      this.cdr.markForCheck();
+    }));
+
+    this.subscriptions.add(this.service.loadedOnce$.subscribe((loaded) => {
+      this.loadedOnce = loaded;
+      this.cdr.markForCheck();
+    }));
   }
 
   // 🔑 Abrir modal de confirmação de senha para delete ou edit
@@ -87,7 +115,7 @@ export class ProductsListComponent implements OnInit {
       },
       error: () => {
         this.showConfirmModal = false;
-        this.alertMessage = 'Erro ao validar senha!';
+        this.alertMessage = 'Não foi possível validar a senha no momento.';
         this.showAlertModal = true;
       }
     });
@@ -102,16 +130,14 @@ export class ProductsListComponent implements OnInit {
         this.products = this.products.filter(p => p.id !== this.productTarget!.id);
         this.applyFilters();
 
-        this.alertMessage = 'Produto deletado com sucesso!';
-        this.showAlertModal = true;
+        this.setFeedback('Produto removido com sucesso.', 'success');
 
         this.productTarget = undefined;
         this.confirmAction = undefined;
         this.cdr.detectChanges();
       },
-      error: () => {
-        this.alertMessage = 'Erro ao deletar produto!';
-        this.showAlertModal = true;
+      error: (error: Error) => {
+        this.setFeedback(error.message, 'error');
 
         this.productTarget = undefined;
         this.confirmAction = undefined;
@@ -129,42 +155,30 @@ export class ProductsListComponent implements OnInit {
         this.applyFilters();
         this.showEditModal = false;
 
-        this.alertMessage = 'Produto atualizado com sucesso!';
-        this.showAlertModal = true;
+        this.setFeedback('Produto atualizado com sucesso.', 'success');
 
         this.productTarget = undefined;
         this.confirmAction = undefined;
       },
-      error: () => {
-        this.alertMessage = 'Erro ao atualizar produto!';
-        this.showAlertModal = true;
+      error: (error: Error) => {
+        this.setFeedback(error.message, 'error');
       }
     });
   }
 
   // 🔃 Filtros e paginação
   applyFilters() {
-    const pageSize = Number(this.pageSize);
-    let result = [...this.products];
+    const nextState = buildProductListState(this.products, {
+      pageSize: this.pageSize,
+      currentPage: this.currentPage,
+      searchTerm: this.searchTerm,
+      sortBy: this.sortBy,
+    });
 
-    if (this.searchTerm) {
-      const term = this.searchTerm.toLowerCase();
-      result = result.filter(
-        product => product.name.toLowerCase().includes(term) || product.barcode.toString().includes(term)
-      );
-    }
-
-    result.sort((a, b) => this.sortBy === 'barcode' ? Number(a.barcode) - Number(b.barcode) : a.name.localeCompare(b.name));
-
-    this.processedProducts = result;
-
-    this.totalPages = Math.max(1, Math.ceil(result.length / pageSize));
-    if (this.currentPage > this.totalPages) this.currentPage = 1;
-
-    const startIndex = (this.currentPage - 1) * pageSize;
-    const endIndex = startIndex + pageSize;
-
-    this.filteredProducts = this.processedProducts.slice(startIndex, endIndex);
+    this.processedProducts = nextState.processedProducts;
+    this.filteredProducts = nextState.filteredProducts;
+    this.totalPages = nextState.totalPages;
+    this.currentPage = nextState.currentPage;
   }
 
   nextPage() {
@@ -179,5 +193,18 @@ export class ProductsListComponent implements OnInit {
       this.currentPage--;
       this.applyFilters();
     }
+  }
+
+  ngOnDestroy() {
+    this.subscriptions.unsubscribe();
+  }
+
+  retryLoad() {
+    this.service.load();
+  }
+
+  private setFeedback(message: string, type: 'success' | 'error') {
+    this.feedbackMessage = message;
+    this.feedbackType = type;
   }
 }

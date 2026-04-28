@@ -9,6 +9,8 @@
 
 .form {
   width: 100%;
+  display: grid;
+  gap: 10px;
 }
 
 /* GRID PRINCIPAL DO FORM */
@@ -43,6 +45,19 @@
 .form-button {
   width: 100%;
   height: 38px;
+}
+
+.form-feedback {
+  font-size: 0.82rem;
+  margin-left: 4px;
+}
+
+.form-feedback--error {
+  color: var(--danger-500);
+}
+
+.form-feedback--success {
+  color: var(--success-500);
 }
 
 /* ============================

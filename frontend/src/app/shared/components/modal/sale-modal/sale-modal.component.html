@@ -19,11 +19,17 @@
     </div>
 
     <div class="sale-list">
+      <div class="sale-state" *ngIf="productsLoading">Carregando produtos...</div>
+      <div class="sale-state sale-state--error" *ngIf="productsLoadError">{{ productsLoadError }}</div>
+      <div class="sale-state" *ngIf="!productsLoading && !productsLoadError && !visibleProducts.length">
+        Nenhum produto encontrado.
+      </div>
+
       <div class="sale-item" *ngFor="let p of visibleProducts">
         <div class="sale-item__info">
           <span class="sale-text sale-text--name">{{ p.name }}</span>
           <span class="sale-text sale-text--meta">
-            R$ {{ p.price | number:'1.2-2' }} · Estoque: {{ p.quantity }}
+            {{ p.price | currency:'BRL':'symbol':'1.2-2':'pt-BR' }} · Estoque: {{ p.quantity }}
           </span>
         </div>
         <button
@@ -44,7 +50,7 @@
           <div class="sale-item__info">
             <span class="sale-text sale-text--name">{{ item.name }}</span>
             <span class="sale-text sale-text--meta">
-              R$ {{ item.price | number:'1.2-2' }} cada · Máx {{ item.stock }}
+              {{ item.price | currency:'BRL':'symbol':'1.2-2':'pt-BR' }} cada · Máx {{ item.stock }}
             </span>
           </div>
 
@@ -70,10 +76,12 @@
 
       <div class="sale-total">
         <span>Total da venda</span>
-        <strong>R$ {{ total | number:'1.2-2' }}</strong>
+        <strong>{{ total | currency:'BRL':'symbol':'1.2-2':'pt-BR' }}</strong>
       </div>
 
     </div>
+
+    <small class="modal-error" *ngIf="errorMessage">{{ errorMessage }}</small>
 
     <div class="modal-footer">
       <button class="btn btn--secondary" (click)="close.emit()">Cancelar</button>

@@ -28,6 +28,24 @@
   gap: 14px;
 }
 
+.list__state {
+  grid-column: 1 / -1;
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-md);
+  padding: 14px;
+  color: var(--text-secondary);
+  background: rgba(15, 23, 42, 0.75);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.list__state--error {
+  border-color: rgba(239, 68, 68, 0.35);
+  color: #fecaca;
+}
+
 /* CARD */
 .card {
   background: var(--bg-card);
@@ -103,6 +121,16 @@
   font-size: 0.85rem;
   color: var(--text-muted);
   white-space: nowrap;
+}
+
+.list__feedback {
+  color: var(--success-500);
+  font-size: 0.82rem;
+  margin-top: -4px;
+}
+
+.list__feedback--error {
+  color: var(--danger-500);
 }
 
 /* RESPONSIVIDADE */

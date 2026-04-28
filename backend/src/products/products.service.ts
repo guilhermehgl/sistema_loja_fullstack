@@ -1,4 +1,4 @@
-import { Injectable, ConflictException, ForbiddenException } from '@nestjs/common';
+import { BadRequestException, ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Product } from './products.entity';
@@ -12,6 +12,10 @@ export class ProductsService {
   ) { }
 
   async create(dto: CreateProductDto) {
+    if (dto.price < 0 || dto.quantity < 0) {
+      throw new BadRequestException('Preço e quantidade devem ser maiores ou iguais a zero.');
+    }
+
     const product = await this.repository.findOne({
       where: { barcode: dto.barcode },
     });
@@ -37,7 +41,11 @@ export class ProductsService {
     const product = await this.repository.findOneBy({ id });
 
     if (!product) {
-      throw new Error('Produto não encontrado');
+      throw new NotFoundException('Produto não encontrado.');
+    }
+
+    if (price < 0) {
+      throw new BadRequestException('Preço deve ser maior ou igual a zero.');
     }
 
     product.price = price;
@@ -50,7 +58,15 @@ export class ProductsService {
 
   async updateProduct(id: string, dto: Partial<CreateProductDto>) {
     const product = await this.repository.findOneBy({ id });
-    if (!product) throw new Error('Produto não encontrado');
+    if (!product) throw new NotFoundException('Produto não encontrado.');
+
+    if (dto.quantity !== undefined && dto.quantity < 0) {
+      throw new BadRequestException('Quantidade deve ser maior ou igual a zero.');
+    }
+
+    if (dto.price !== undefined && dto.price < 0) {
+      throw new BadRequestException('Preço deve ser maior ou igual a zero.');
+    }
 
     // Atualiza campos
     product.name = dto.name ?? product.name;

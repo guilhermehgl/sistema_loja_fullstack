@@ -34,9 +34,7 @@ export class OrdersService {
         }
 
 if (product.quantity < item.quantity) {
-  throw new BadRequestException({
-    message: `Estoque insuficiente para ${product.name}`,
-  });
+  throw new BadRequestException(`Estoque insuficiente para ${product.name}.`);
 }
 
 

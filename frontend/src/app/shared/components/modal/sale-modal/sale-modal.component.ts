@@ -1,17 +1,11 @@
-import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, OnDestroy, OnInit, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { Subscription } from 'rxjs';
 
 import { ProductsService, Product } from '../../../../core/services/products.service';
 import { OrdersService } from '../../../../core/services/orders.service';
-
-interface CartItem {
-  productId: string;
-  name: string;
-  price: number;
-  quantity: number;
-  stock: number;
-}
+import { addItemToCart, cartTotal, CartItem, increaseItem, normalizeCartQuantity, removeOrDecrease } from './sale-cart.util';
 
 @Component({
   selector: 'app-sale-modal',
@@ -23,7 +17,7 @@ interface CartItem {
   templateUrl: './sale-modal.component.html',
   styleUrls: ['../../../../../../src/styles/modal.global.scss']
 })
-export class SaleModalComponent implements OnInit {
+export class SaleModalComponent implements OnInit, OnDestroy {
 
   @Output() close = new EventEmitter<void>();
   @Output() success = new EventEmitter<number>();
@@ -35,6 +29,9 @@ export class SaleModalComponent implements OnInit {
 
   loading = false;
   errorMessage = '';
+  productsLoading = true;
+  productsLoadError = '';
+  private subscriptions = new Subscription();
 
   constructor(
     private productsService: ProductsService,
@@ -42,10 +39,22 @@ export class SaleModalComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    this.productsService.products$.subscribe(products => {
+    this.subscriptions.add(this.productsService.loading$.subscribe((loading) => {
+      this.productsLoading = loading;
+    }));
+
+    this.subscriptions.add(this.productsService.error$.subscribe((error) => {
+      this.productsLoadError = error ?? '';
+    }));
+
+    this.subscriptions.add(this.productsService.products$.subscribe(products => {
       this.products = products;
       this.filter();
-    });
+    }));
+  }
+
+  ngOnDestroy() {
+    this.subscriptions.unsubscribe();
   }
 
   /** Filtra produtos e limita a 3 */
@@ -60,25 +69,7 @@ export class SaleModalComponent implements OnInit {
 
   /** Adiciona produto ao carrinho */
   add(product: Product) {
-    // 🚫 Estoque zerado nunca entra no carrinho
-    if (product.quantity <= 0) {
-      return;
-    }
-    const item = this.cart.find(i => i.productId === product.id);
-
-    if (item) {
-      if (item.quantity < item.stock) {
-        item.quantity++;
-      }
-    } else {
-      this.cart.push({
-        productId: product.id,
-        name: product.name,
-        price: product.price,
-        quantity: 1,
-        stock: product.quantity, // 👈 estoque real
-      });
-    }
+    this.cart = addItemToCart(this.cart, product);
   }
 
   canAddProduct(product: Product): boolean {
@@ -94,16 +85,7 @@ export class SaleModalComponent implements OnInit {
   }
 
   onQuantityChange(item: CartItem) {
-    // Garante número inteiro
-    item.quantity = Math.floor(Number(item.quantity));
-
-    if (item.quantity < 1) {
-      item.quantity = 1;
-    }
-
-    if (item.quantity > item.stock) {
-      item.quantity = item.stock;
-    }
+    item.quantity = normalizeCartQuantity(item.quantity, item.stock);
   }
 
   onQuantityInput(event: Event, item: CartItem) {
@@ -129,10 +111,7 @@ export class SaleModalComponent implements OnInit {
   }
 
   onQuantityBlur(item: CartItem) {
-    // Quando sair do campo, garante valor válido
-    if (!item.quantity || item.quantity < 1) {
-      item.quantity = 1;
-    }
+    item.quantity = normalizeCartQuantity(item.quantity, item.stock);
   }
 
   blockInvalidKeys(event: KeyboardEvent) {
@@ -143,23 +122,20 @@ export class SaleModalComponent implements OnInit {
 
   /** Aumenta quantidade */
   inc(item: CartItem) {
-    if (item.quantity < item.stock) {
-      item.quantity++;
-    }
+    const index = this.cart.findIndex((cartItem) => cartItem.productId === item.productId);
+    if (index === -1) return;
+    this.cart[index] = increaseItem(this.cart[index]);
   }
 
 
   /** Diminui quantidade */
   dec(item: CartItem) {
-    item.quantity--;
-    if (item.quantity <= 0) {
-      this.cart = this.cart.filter(i => i !== item);
-    }
+    this.cart = removeOrDecrease(this.cart, item);
   }
 
   /** Total da venda (somente visual) */
   get total(): number {
-    return this.cart.reduce((sum, i) => sum + i.price * i.quantity, 0);
+    return cartTotal(this.cart);
   }
 
   /** Finaliza venda chamando o backend */
@@ -169,14 +145,9 @@ export class SaleModalComponent implements OnInit {
       return;
     }
 
-    // Aqui futuramente entra chamada ao backend (/orders)
-    const total = this.total;
-
-    this.success.emit(total);
-    this.close.emit();
-
     this.loading = true;
     this.errorMessage = '';
+    const total = this.total;
 
     const dto = {
       items: this.cart.map(item => ({
@@ -188,13 +159,13 @@ export class SaleModalComponent implements OnInit {
     this.ordersService.createOrder(dto).subscribe({
       next: () => {
         this.cart = [];
+        this.success.emit(total);
         this.loading = false;
         this.close.emit();
       },
-      error: err => {
+      error: (err: Error) => {
         this.loading = false;
-        this.errorMessage =
-          err?.error?.message || 'Erro ao realizar a venda';
+        this.errorMessage = err.message;
       },
     });
   }

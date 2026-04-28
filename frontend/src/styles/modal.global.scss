@@ -104,6 +104,19 @@
   background: linear-gradient(180deg, rgba(15, 23, 42, 0.92), rgba(2, 6, 23, 0.92));
 }
 
+.sale-state {
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-md);
+  padding: 10px 12px;
+  color: var(--text-muted);
+  background: rgba(15, 23, 42, 0.55);
+}
+
+.sale-state--error {
+  border-color: rgba(239, 68, 68, 0.35);
+  color: #fecaca;
+}
+
 .sale-item__info {
   display: grid;
   gap: 4px;

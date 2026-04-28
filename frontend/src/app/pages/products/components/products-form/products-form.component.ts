@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, AbstractControl, ValidationErrors } from '@angular/forms';
 import { ProductsService } from '../../../../core/services/products.service';
+import { formatPriceInput, toNumericPrice } from './products-form.util';
 
 type ProductFormControls = {
   name: AbstractControl;
@@ -19,6 +20,9 @@ type ProductFormControls = {
 
 export class ProductsFormComponent {
   form: FormGroup;
+  isSubmitting = false;
+  submitError = '';
+  submitSuccess = '';
 
   constructor(
     private fb: FormBuilder,
@@ -29,6 +33,7 @@ export class ProductsFormComponent {
         name: [
           '',
           [
+            Validators.required,
             Validators.minLength(4),
             Validators.maxLength(30),
           ],
@@ -53,7 +58,7 @@ export class ProductsFormComponent {
           '',
           [
             Validators.required,
-            Validators.pattern(/^\d+([.,]\d{1,2})?$/),
+            Validators.pattern(/^\d{1,7}(,\d{2})?$/),
           ],
         ],
       },
@@ -91,33 +96,16 @@ export class ProductsFormComponent {
 
   priceMask(event: Event) {
     const input = event.target as HTMLInputElement;
+    const formatted = formatPriceInput(input.value);
 
-    input.value = input.value
-      .replace(/[^0-9.,]/g, '')   // só números, ponto e vírgula
-      .replace(/(,.*),/g, '$1')   // só uma vírgula
-      .replace(/(\..*)\./g, '$1'); // só um ponto
-
-    this.form.get('price')?.setValue(input.value);
+    input.value = formatted;
+    this.form.get('price')?.setValue(formatted);
   }
 
   normalizePrice() {
-    let value = this.form.get('price')?.value;
-
+    const value = this.form.get('price')?.value as string | null;
     if (!value) return;
-
-    // troca vírgula por ponto
-    value = value.replace(',', '.');
-
-    let number = parseFloat(value);
-
-    if (isNaN(number)) {
-      this.form.get('price')?.setErrors({ invalid: true });
-      return;
-    }
-
-    const normalized = number.toFixed(2);
-
-    this.form.get('price')?.setValue(normalized);
+    this.form.get('price')?.setValue(formatPriceInput(value));
   }
 
 
@@ -137,18 +125,22 @@ export class ProductsFormComponent {
 
 
   save() {
+    this.submitError = '';
+    this.submitSuccess = '';
+
     if (this.form.invalid) {
       this.form.markAllAsTouched();
       return;
     }
 
+    this.isSubmitting = true;
+
     const raw = this.form.value;
 
     const payload = {
       ...raw,
-      price: Number(
-        raw.price.replace(',', '.')
-      )
+      quantity: Number(raw.quantity),
+      price: toNumericPrice(raw.price),
     };
 
     this.service.create(payload).subscribe({
@@ -159,11 +151,13 @@ export class ProductsFormComponent {
           quantity: '',
           price: '',
         });
+        this.submitSuccess = 'Produto salvo com sucesso.';
       },
-      error: (err) => {
-        console.error('Erro ao salvar produto:', err);
-        alert('Erro ao salvar produto (ver console/backend)');
+      error: (err: Error) => {
+        this.submitError = err.message;
       }
+    }).add(() => {
+      this.isSubmitting = false;
     });
   }
 

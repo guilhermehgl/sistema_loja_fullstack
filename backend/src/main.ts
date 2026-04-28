@@ -1,4 +1,5 @@
 import { NestFactory } from '@nestjs/core';
+import { BadRequestException, ValidationPipe } from '@nestjs/common';
 import { AppModule } from './app.module';
 
 async function bootstrap() {
@@ -20,6 +21,23 @@ async function bootstrap() {
     methods: '*',
     allowedHeaders: '*',
   });
+
+  app.useGlobalPipes(
+    new ValidationPipe({
+      whitelist: true,
+      transform: true,
+      forbidNonWhitelisted: true,
+      exceptionFactory: (errors) => {
+        const details = errors
+          .flatMap((error) => Object.values(error.constraints ?? {}));
+
+        return new BadRequestException({
+          message: 'Dados inválidos enviados para a API.',
+          errors: details,
+        });
+      },
+    }),
+  );
 
   await app.listen(port);
 }

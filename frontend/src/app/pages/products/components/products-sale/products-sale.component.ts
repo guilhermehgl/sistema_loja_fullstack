@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, CurrencyPipe } from '@angular/common';
 import { SaleModalComponent } from '../../../../shared/components/modal/sale-modal/sale-modal.component';
 import { AlertModalComponent } from '../../../../shared/components/modal/alert-modal/alert-modal.component';
 
@@ -10,6 +10,7 @@ import { AlertModalComponent } from '../../../../shared/components/modal/alert-m
     AlertModalComponent,
     SaleModalComponent,
     CommonModule,
+    CurrencyPipe,
   ],
   templateUrl: './products-sale.component.html',
   styleUrls: ['./products-sale.component.scss']
