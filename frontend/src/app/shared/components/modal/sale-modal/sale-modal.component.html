@@ -2,25 +2,33 @@
   <div class="modal-box modal-box--large">
 
     <div class="modal-box__header">
-      <h2 class="modal-box__title">Venda</h2>
+      <div>
+        <h2 class="modal-box__title">Nova venda</h2>
+        <p class="modal-text">Busque produtos e ajuste as quantidades do carrinho.</p>
+      </div>
       <button class="modal-close" (click)="close.emit()">×</button>
     </div>
 
-    <input 
-      class="modal-input modal-input--search" 
-      [(ngModel)]="search" 
-      (input)="filter()" 
-      placeholder="Buscar produto..." 
-    />
+    <div class="sale-search">
+      <input
+        class="modal-input modal-input--search"
+        [(ngModel)]="search"
+        (input)="filter()"
+        placeholder="Buscar por nome ou código de barras..."
+      />
+    </div>
 
     <div class="sale-list">
       <div class="sale-item" *ngFor="let p of visibleProducts">
-        <span class="sale-text">
-          {{ p.name }} - R$ {{ p.price | number:'1.2-2' }}
-        </span>
-        <button 
-          class="btn btn--primary" 
-          (click)="add(p)" 
+        <div class="sale-item__info">
+          <span class="sale-text sale-text--name">{{ p.name }}</span>
+          <span class="sale-text sale-text--meta">
+            R$ {{ p.price | number:'1.2-2' }} · Estoque: {{ p.quantity }}
+          </span>
+        </div>
+        <button
+          class="btn btn--primary sale-add-btn"
+          (click)="add(p)"
           [disabled]="!canAddProduct(p) || p.quantity <= 0">
           Adicionar
         </button>
@@ -28,21 +36,27 @@
     </div>
 
     <div class="sale-cart" *ngIf="cart.length">
+      <h3 class="sale-cart__title">Itens da venda</h3>
 
       <div class="sale-cart-item" *ngFor="let item of cart">
 
         <div class="sale-cart-row">
-          <span class="sale-text">{{ item.name }}</span>
+          <div class="sale-item__info">
+            <span class="sale-text sale-text--name">{{ item.name }}</span>
+            <span class="sale-text sale-text--meta">
+              R$ {{ item.price | number:'1.2-2' }} cada · Máx {{ item.stock }}
+            </span>
+          </div>
 
           <div class="sale-qty">
             <button class="btn btn--secondary" (click)="dec(item)">-</button>
-            <input 
+            <input
               class="modal-input modal-input--qty"
-              type="number" 
-              [value]="item.quantity" 
+              type="number"
+              [value]="item.quantity"
               (input)="onQuantityInput($event, item)"
-              (blur)="onQuantityBlur(item)" 
-              (keydown)="blockInvalidKeys($event)" 
+              (blur)="onQuantityBlur(item)"
+              (keydown)="blockInvalidKeys($event)"
             />
             <button class="btn btn--secondary" (click)="inc(item)" [disabled]="!canIncrease(item)">+</button>
           </div>
@@ -55,7 +69,8 @@
       </div>
 
       <div class="sale-total">
-        Total: R$ {{ total | number:'1.2-2' }}
+        <span>Total da venda</span>
+        <strong>R$ {{ total | number:'1.2-2' }}</strong>
       </div>
 
     </div>

@@ -35,14 +35,17 @@
 }
 
 .modal-box__title {
-  font-size: 1.05rem;
-  font-weight: 600;
+  font-size: 1.25rem;
+  font-weight: 700;
+  letter-spacing: 0.01em;
   color: var(--text-primary);
+  margin: 0;
 }
 
 .modal-text {
   font-size: 0.95rem;
   color: var(--text-secondary);
+  margin: 4px 0 0;
 }
 
 .modal-error {
@@ -56,4 +59,130 @@
   justify-content: flex-end;
   gap: 10px;
   margin-top: 8px;
+}
+
+.modal-close {
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  border: 1px solid var(--border-default);
+  background: var(--bg-card);
+  color: var(--text-secondary);
+  font-size: 1.1rem;
+  font-weight: 700;
+  line-height: 1;
+  cursor: pointer;
+  transition: var(--transition-base);
+
+  &:hover {
+    color: var(--text-primary);
+    border-color: var(--primary-500);
+    transform: translateY(-1px);
+  }
+}
+
+.sale-search {
+  margin-top: 2px;
+}
+
+.sale-list {
+  display: grid;
+  gap: 10px;
+  max-height: 180px;
+  overflow: auto;
+  padding-right: 2px;
+}
+
+.sale-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 14px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-default);
+  background: linear-gradient(180deg, rgba(15, 23, 42, 0.92), rgba(2, 6, 23, 0.92));
+}
+
+.sale-item__info {
+  display: grid;
+  gap: 4px;
+}
+
+.sale-text--name {
+  color: var(--text-primary);
+  font-weight: 600;
+}
+
+.sale-text--meta {
+  color: var(--text-muted);
+  font-size: 0.82rem;
+}
+
+.sale-add-btn {
+  min-width: 104px;
+}
+
+.sale-cart {
+  margin-top: 2px;
+  border-top: 1px solid var(--border-default);
+  padding-top: 12px;
+  display: grid;
+  gap: 10px;
+}
+
+.sale-cart__title {
+  margin: 0;
+  font-size: 0.95rem;
+  color: var(--text-secondary);
+  font-weight: 600;
+}
+
+.sale-cart-item {
+  padding: 10px 12px;
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-md);
+  background: rgba(8, 16, 36, 0.75);
+}
+
+.sale-cart-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.sale-qty {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.sale-qty .btn {
+  min-width: 36px;
+  padding: 0;
+}
+
+.modal-input--qty {
+  width: 72px;
+  text-align: center;
+  font-weight: 700;
+  color: var(--text-primary);
+  padding: 0 8px;
+}
+
+.sale-total {
+  margin-top: 6px;
+  padding: 12px 14px;
+  border-radius: var(--radius-md);
+  border: 1px solid rgba(56, 189, 248, 0.35);
+  background: linear-gradient(135deg, rgba(56, 189, 248, 0.14), rgba(8, 47, 73, 0.08));
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: var(--text-primary);
+}
+
+.sale-total strong {
+  font-size: 1.1rem;
 }
