@@ -167,7 +167,6 @@ Se os hooks de deploy não estiverem configurados, o workflow de CD finaliza sem
 ## Melhorias Futuras
 
 - Autenticação e autorização com JWT
-- Pipeline CI/CD com GitHub Actions
 - Dashboard com métricas de vendas e estoque
 
 ## Autor
