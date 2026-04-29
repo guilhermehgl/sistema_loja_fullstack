@@ -1,4 +1,12 @@
-import { IsInt, IsNotEmpty, IsNumber, IsString, Length, MaxLength, Min } from 'class-validator';
+import {
+  IsInt,
+  IsNotEmpty,
+  IsNumber,
+  IsString,
+  Length,
+  MaxLength,
+  Min,
+} from 'class-validator';
 
 export class CreateProductDto {
   @IsNotEmpty({ message: 'Nome é obrigatório.' })
@@ -8,7 +16,9 @@ export class CreateProductDto {
 
   @IsNotEmpty({ message: 'Código de barras é obrigatório.' })
   @IsString()
-  @Length(8, 8, { message: 'Código de barras deve conter exatamente 8 dígitos.' })
+  @Length(8, 8, {
+    message: 'Código de barras deve conter exatamente 8 dígitos.',
+  })
   barcode: string;
 
   @IsNotEmpty({ message: 'Quantidade é obrigatória.' })

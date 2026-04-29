@@ -1,4 +1,9 @@
-import { BadRequestException, ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  ForbiddenException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Product } from './products.entity';
@@ -9,11 +14,13 @@ export class ProductsService {
   constructor(
     @InjectRepository(Product)
     private readonly repository: Repository<Product>,
-  ) { }
+  ) {}
 
   async create(dto: CreateProductDto) {
     if (dto.price < 0 || dto.quantity < 0) {
-      throw new BadRequestException('Preço e quantidade devem ser maiores ou iguais a zero.');
+      throw new BadRequestException(
+        'Preço e quantidade devem ser maiores ou iguais a zero.',
+      );
     }
 
     const product = await this.repository.findOne({
@@ -61,7 +68,9 @@ export class ProductsService {
     if (!product) throw new NotFoundException('Produto não encontrado.');
 
     if (dto.quantity !== undefined && dto.quantity < 0) {
-      throw new BadRequestException('Quantidade deve ser maior ou igual a zero.');
+      throw new BadRequestException(
+        'Quantidade deve ser maior ou igual a zero.',
+      );
     }
 
     if (dto.price !== undefined && dto.price < 0) {
@@ -86,5 +95,4 @@ export class ProductsService {
 
     return this.repository.delete(id);
   }
-
 }

@@ -7,9 +7,7 @@ import { OrderItem } from './order-item.entity';
 import { Product } from '../products/products.entity';
 
 @Module({
-  imports: [
-    TypeOrmModule.forFeature([Order, OrderItem, Product]),
-  ],
+  imports: [TypeOrmModule.forFeature([Order, OrderItem, Product])],
   controllers: [OrdersController],
   providers: [OrdersService],
 })

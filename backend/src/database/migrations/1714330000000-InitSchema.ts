@@ -61,8 +61,12 @@ export class InitSchema1714330000000 implements MigrationInterface {
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
-    await queryRunner.query('DROP TRIGGER IF EXISTS trigger_products_updated_at ON "products"');
-    await queryRunner.query('DROP FUNCTION IF EXISTS update_products_updated_at');
+    await queryRunner.query(
+      'DROP TRIGGER IF EXISTS trigger_products_updated_at ON "products"',
+    );
+    await queryRunner.query(
+      'DROP FUNCTION IF EXISTS update_products_updated_at',
+    );
     await queryRunner.query('DROP TABLE IF EXISTS "order_items"');
     await queryRunner.query('DROP TABLE IF EXISTS "orders"');
     await queryRunner.query('DROP TABLE IF EXISTS "products"');

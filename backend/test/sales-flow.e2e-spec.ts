@@ -10,14 +10,18 @@ describe('Sales flow (e2e)', () => {
   let db: DataSource;
 
   const resetDatabase = async () => {
-    await db.query('TRUNCATE TABLE "order_items", "orders", "products" RESTART IDENTITY CASCADE');
+    await db.query(
+      'TRUNCATE TABLE "order_items", "orders", "products" RESTART IDENTITY CASCADE',
+    );
   };
 
   beforeAll(async () => {
     const testDatabaseUrl = process.env.TEST_DATABASE_URL;
 
     if (!testDatabaseUrl) {
-      throw new Error('TEST_DATABASE_URL não definido. Configure um banco de teste PostgreSQL.');
+      throw new Error(
+        'TEST_DATABASE_URL não definido. Configure um banco de teste PostgreSQL.',
+      );
     }
 
     process.env.DATABASE_URL = testDatabaseUrl;
@@ -84,11 +88,15 @@ describe('Sales flow (e2e)', () => {
       .get('/products')
       .expect(200);
 
-    const soldProduct = productsAfterSale.body.find((p: { id: string }) => p.id === productId);
+    const soldProduct = productsAfterSale.body.find(
+      (p: { id: string }) => p.id === productId,
+    );
     expect(soldProduct).toBeDefined();
     expect(soldProduct.quantity).toBe(7);
 
-    const ordersCount = await db.query('SELECT COUNT(*)::int AS total FROM "orders"');
+    const ordersCount = await db.query(
+      'SELECT COUNT(*)::int AS total FROM "orders"',
+    );
     expect(ordersCount[0].total).toBe(1);
   });
 

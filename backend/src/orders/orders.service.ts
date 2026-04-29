@@ -1,7 +1,4 @@
-import {
-  BadRequestException,
-  Injectable,
-} from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, DataSource } from 'typeorm';
 import { Order } from './orders.entity';
@@ -33,10 +30,11 @@ export class OrdersService {
           throw new BadRequestException('Produto não encontrado');
         }
 
-if (product.quantity < item.quantity) {
-  throw new BadRequestException(`Estoque insuficiente para ${product.name}.`);
-}
-
+        if (product.quantity < item.quantity) {
+          throw new BadRequestException(
+            `Estoque insuficiente para ${product.name}.`,
+          );
+        }
 
         product.quantity -= item.quantity;
         await manager.save(product);

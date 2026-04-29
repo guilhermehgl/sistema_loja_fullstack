@@ -1,12 +1,19 @@
-import { Body, Controller, Get, Post, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Post,
+  Patch,
+  Param,
+  Delete,
+} from '@nestjs/common';
 import { ProductsService } from './products.service';
 import { CreateProductDto } from './dto/create-product.dto';
-import { UpdatePriceDto } from "./dto/update-price.dto"
-
+import { UpdatePriceDto } from './dto/update-price.dto';
 
 @Controller('products')
 export class ProductsController {
-  constructor(private readonly service: ProductsService) { }
+  constructor(private readonly service: ProductsService) {}
 
   @Post()
   create(@Body() dto: CreateProductDto) {
@@ -27,10 +34,7 @@ export class ProductsController {
   }
 
   @Patch(':id/price')
-  updatePrice(
-    @Param('id') id: string,
-    @Body() dto: UpdatePriceDto,
-  ) {
+  updatePrice(@Param('id') id: string, @Body() dto: UpdatePriceDto) {
     return this.service.updatePrice(id, dto.price);
   }
 
@@ -43,9 +47,8 @@ export class ProductsController {
   @Patch(':id')
   updateProduct(
     @Param('id') id: string,
-    @Body() updatedProduct: Partial<CreateProductDto>
+    @Body() updatedProduct: Partial<CreateProductDto>,
   ) {
     return this.service.updateProduct(id, updatedProduct);
   }
-
 }
