@@ -8,9 +8,14 @@ import testDataSource from '../src/database/data-source';
 describe('Sales flow (e2e)', () => {
   let app: INestApplication;
   let db: DataSource;
-  const testDatabaseUrl = process.env.TEST_DATABASE_URL;
+
+  const resetDatabase = async () => {
+    await db.query('TRUNCATE TABLE "order_items", "orders", "products" RESTART IDENTITY CASCADE');
+  };
 
   beforeAll(async () => {
+    const testDatabaseUrl = process.env.TEST_DATABASE_URL;
+
     if (!testDatabaseUrl) {
       throw new Error('TEST_DATABASE_URL não definido. Configure um banco de teste PostgreSQL.');
     }
@@ -25,6 +30,7 @@ describe('Sales flow (e2e)', () => {
     }
 
     await db.runMigrations();
+    await resetDatabase();
 
     const moduleFixture: TestingModule = await Test.createTestingModule({
       imports: [AppModule],
@@ -34,10 +40,19 @@ describe('Sales flow (e2e)', () => {
     await app.init();
   });
 
+  beforeEach(async () => {
+    await resetDatabase();
+  });
+
   afterAll(async () => {
-    await db.query('TRUNCATE TABLE "order_items", "orders", "products" RESTART IDENTITY CASCADE');
-    await app.close();
-    await db.destroy();
+    if (db?.isInitialized) {
+      await resetDatabase();
+      await db.destroy();
+    }
+
+    if (app) {
+      await app.close();
+    }
   });
 
   it('deve completar o fluxo de venda ponta a ponta', async () => {

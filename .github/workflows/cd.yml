@@ -1,0 +1,29 @@
+name: CD
+
+on:
+  workflow_run:
+    workflows: [CI]
+    types: [completed]
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    name: Deploy (Render + Vercel)
+    runs-on: ubuntu-latest
+    if: ${{ github.event_name == 'workflow_dispatch' || (github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.head_branch == 'main') }}
+
+    steps:
+      - name: Trigger Render deploy
+        if: ${{ secrets.RENDER_DEPLOY_HOOK_URL != '' }}
+        run: curl -fsS -X POST "${{ secrets.RENDER_DEPLOY_HOOK_URL }}"
+
+      - name: Trigger Vercel deploy
+        if: ${{ secrets.VERCEL_DEPLOY_HOOK_URL != '' }}
+        run: curl -fsS -X POST "${{ secrets.VERCEL_DEPLOY_HOOK_URL }}"
+
+      - name: Summary
+        run: |
+          echo "CD executed."
+          echo "Render hook configured: ${{ secrets.RENDER_DEPLOY_HOOK_URL != '' }}"
+          echo "Vercel hook configured: ${{ secrets.VERCEL_DEPLOY_HOOK_URL != '' }}"
