@@ -12,18 +12,21 @@ jobs:
     name: Deploy (Render + Vercel)
     runs-on: ubuntu-latest
     if: ${{ github.event_name == 'workflow_dispatch' || (github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.head_branch == 'main') }}
+    env:
+      RENDER_DEPLOY_HOOK_URL: ${{ secrets.RENDER_DEPLOY_HOOK_URL }}
+      VERCEL_DEPLOY_HOOK_URL: ${{ secrets.VERCEL_DEPLOY_HOOK_URL }}
 
     steps:
       - name: Trigger Render deploy
-        if: ${{ secrets.RENDER_DEPLOY_HOOK_URL != '' }}
-        run: curl -fsS -X POST "${{ secrets.RENDER_DEPLOY_HOOK_URL }}"
+        if: ${{ env.RENDER_DEPLOY_HOOK_URL != '' }}
+        run: curl -fsS -X POST "$RENDER_DEPLOY_HOOK_URL"
 
       - name: Trigger Vercel deploy
-        if: ${{ secrets.VERCEL_DEPLOY_HOOK_URL != '' }}
-        run: curl -fsS -X POST "${{ secrets.VERCEL_DEPLOY_HOOK_URL }}"
+        if: ${{ env.VERCEL_DEPLOY_HOOK_URL != '' }}
+        run: curl -fsS -X POST "$VERCEL_DEPLOY_HOOK_URL"
 
       - name: Summary
         run: |
           echo "CD executed."
-          echo "Render hook configured: ${{ secrets.RENDER_DEPLOY_HOOK_URL != '' }}"
-          echo "Vercel hook configured: ${{ secrets.VERCEL_DEPLOY_HOOK_URL != '' }}"
+          echo "Render hook configured: ${{ env.RENDER_DEPLOY_HOOK_URL != '' }}"
+          echo "Vercel hook configured: ${{ env.VERCEL_DEPLOY_HOOK_URL != '' }}"
