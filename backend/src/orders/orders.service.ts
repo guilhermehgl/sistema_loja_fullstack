@@ -21,31 +21,40 @@ export class OrdersService {
       let total = 0;
       const items: OrderItem[] = [];
 
+      const quantities = new Map<string, number>();
       for (const item of dto.items) {
-        const product = await manager.findOneBy(Product, {
-          id: item.productId,
+        const id = item.productId.toLowerCase();
+        quantities.set(id, (quantities.get(id) ?? 0) + item.quantity);
+      }
+      // Todas as vendas adquirem os bloqueios na mesma ordem.
+      for (const [productId, quantity] of [...quantities].sort(([a], [b]) =>
+        a.localeCompare(b),
+      )) {
+        const product = await manager.findOne(Product, {
+          where: { id: productId },
+          lock: { mode: 'pessimistic_write' },
         });
 
         if (!product) {
           throw new BadRequestException('Produto não encontrado');
         }
 
-        if (product.quantity < item.quantity) {
+        if (product.quantity < quantity) {
           throw new BadRequestException(
             `Estoque insuficiente para ${product.name}.`,
           );
         }
 
-        product.quantity -= item.quantity;
+        product.quantity -= quantity;
         await manager.save(product);
 
         const orderItem = manager.create(OrderItem, {
           product,
-          quantity: item.quantity,
+          quantity,
           price: product.price,
         });
 
-        total += product.price * item.quantity;
+        total += product.price * quantity;
         items.push(orderItem);
       }
 

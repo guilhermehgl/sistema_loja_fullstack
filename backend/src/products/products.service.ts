@@ -1,98 +1,72 @@
 import {
-  BadRequestException,
-  ForbiddenException,
+  ConflictException,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { QueryFailedError, Repository } from 'typeorm';
 import { Product } from './products.entity';
 import { CreateProductDto } from './dto/create-product.dto';
-
+import { UpdateProductDto } from './dto/update-product.dto';
+import { requireAdminPassword } from './admin-password';
 @Injectable()
 export class ProductsService {
   constructor(
-    @InjectRepository(Product)
-    private readonly repository: Repository<Product>,
+    @InjectRepository(Product) private readonly repository: Repository<Product>,
   ) {}
-
   async create(dto: CreateProductDto) {
-    if (dto.price < 0 || dto.quantity < 0) {
-      throw new BadRequestException(
-        'Preço e quantidade devem ser maiores ou iguais a zero.',
-      );
-    }
-
-    const product = await this.repository.findOne({
-      where: { barcode: dto.barcode },
-    });
-
-    // Se já existir, soma a quantidade
-    if (product) {
-      product.quantity += dto.quantity;
-
-      // Atualiza o preço se vier diferente
-      if (dto.price !== product.price) {
-        product.price = dto.price;
-      }
-
-      return this.repository.save(product);
-    }
-
-    // Se não existir, cria novo
-    const newProduct = this.repository.create(dto);
-    return this.repository.save(newProduct);
+    // O índice único arbitra cadastros simultâneos; reposição soma no banco.
+    const [product] = await this.repository.query<Product[]>(
+      `INSERT INTO products (name, barcode, quantity, price) VALUES ($1, $2, $3, $4)
+       ON CONFLICT (barcode) DO UPDATE
+       SET quantity = products.quantity + EXCLUDED.quantity, price = EXCLUDED.price
+       RETURNING *`,
+      [dto.name, dto.barcode, dto.quantity, dto.price],
+    );
+    return product;
   }
-
-  async updatePrice(id: string, price: number) {
-    const product = await this.repository.findOneBy({ id });
-
-    if (!product) {
-      throw new NotFoundException('Produto não encontrado.');
-    }
-
-    if (price < 0) {
-      throw new BadRequestException('Preço deve ser maior ou igual a zero.');
-    }
-
-    product.price = price;
-    return this.repository.save(product);
+  updatePrice(id: string, price: number, password: unknown) {
+    return this.updateProduct(id, { price, adminPassword: password as string });
   }
-
   findAll() {
     return this.repository.find();
   }
-
-  async updateProduct(id: string, dto: Partial<CreateProductDto>) {
-    const product = await this.repository.findOneBy({ id });
-    if (!product) throw new NotFoundException('Produto não encontrado.');
-
-    if (dto.quantity !== undefined && dto.quantity < 0) {
-      throw new BadRequestException(
-        'Quantidade deve ser maior ou igual a zero.',
-      );
+  async updateProduct(id: string, dto: UpdateProductDto) {
+    requireAdminPassword(dto.adminPassword);
+    const { name, barcode, quantity, price } = dto;
+    const changes = Object.fromEntries(
+      Object.entries({ name, barcode, quantity, price }).filter(
+        ([, value]) => value !== undefined,
+      ),
+    );
+    if (!Object.keys(changes).length) {
+      const product = await this.repository.findOneBy({ id });
+      if (!product) throw new NotFoundException('Produto não encontrado.');
+      return product;
     }
-
-    if (dto.price !== undefined && dto.price < 0) {
-      throw new BadRequestException('Preço deve ser maior ou igual a zero.');
+    try {
+      // Alterar preço/nome não salva um saldo de estoque lido anteriormente.
+      const result = await this.repository
+        .createQueryBuilder()
+        .update(Product)
+        .set(changes)
+        .where('id = :id', { id })
+        .returning('*')
+        .execute();
+      if (!result.affected)
+        throw new NotFoundException('Produto não encontrado.');
+      return (result.raw as Product[])[0];
+    } catch (error) {
+      if (
+        error instanceof QueryFailedError &&
+        (error.driverError as { code?: string }).code === '23505'
+      )
+        throw new ConflictException('Código de barras já cadastrado.');
+      throw error;
     }
-
-    // Atualiza campos
-    product.name = dto.name ?? product.name;
-    product.barcode = dto.barcode ?? product.barcode;
-    product.quantity = dto.quantity ?? product.quantity;
-    product.price = dto.price ?? product.price;
-
-    return this.repository.save(product);
   }
-
-  delete(id: string, adminPassword: string) {
-    const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD;
-
-    if (adminPassword !== ADMIN_PASSWORD) {
-      throw new ForbiddenException('Senha de administrador inválida');
-    }
-
+  delete(id: string, password: unknown) {
+    requireAdminPassword(password);
     return this.repository.delete(id);
   }
 }

@@ -3,7 +3,8 @@ import {
   IsNotEmpty,
   IsNumber,
   IsString,
-  Length,
+  Matches,
+  MinLength,
   MaxLength,
   Min,
 } from 'class-validator';
@@ -11,12 +12,14 @@ import {
 export class CreateProductDto {
   @IsNotEmpty({ message: 'Nome é obrigatório.' })
   @IsString()
+  @MinLength(4)
+  @Matches(/\S/)
   @MaxLength(30, { message: 'Nome deve ter no máximo 30 caracteres.' })
   name: string;
 
   @IsNotEmpty({ message: 'Código de barras é obrigatório.' })
   @IsString()
-  @Length(8, 8, {
+  @Matches(/^\d{8}$/, {
     message: 'Código de barras deve conter exatamente 8 dígitos.',
   })
   barcode: string;
