@@ -88,3 +88,7 @@
     margin-top: 8px;
   }
 }
+
+.input-container label { color: var(--text-secondary); font-size: 0.82rem; }
+.form-action { padding-top: 22px; }
+@media (max-width: 480px) { .form-action { padding-top: 0; } }

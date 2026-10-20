@@ -1,89 +1,31 @@
-# Backend - Sistema Loja
+# Backend — Sistema Loja
 
-API NestJS responsável pelo catálogo de produtos e fluxo de vendas, com persistência em PostgreSQL via TypeORM.
+API NestJS/TypeORM/PostgreSQL organizada em produtos, vendas e migrations. Contratos e decisões estão no [README principal](../README.md).
 
-## Stack
+## Execução
 
-- NestJS
-- TypeORM
-- PostgreSQL
-- Class Validator / Validation Pipe
-- Jest + Supertest (e2e)
-
-## Estrutura
-
-```text
-src/
-  database/
-    migrations/
-    data-source.ts
-    typeorm.config.ts
-  products/
-  orders/
-  app.module.ts
-  main.ts
-```
-
-## Variáveis de ambiente
-
-Crie `.env` em `backend` com base em `.env.example`:
+Copie .env.example para .env e configure um PostgreSQL local, DB_SSL=false, CORS_ORIGIN e ADMIN_PASSWORD própria. Configuração administrativa ausente ou vazia bloqueia alterações protegidas; não há senha padrão.
 
 ```bash
-PORT=3000
-CORS_ORIGIN=http://localhost:4200
-DATABASE_URL=postgresql://user:password@localhost:5432/sistema_loja
-DB_SSL=false
-ADMIN_PASSWORD=1234
-```
-
-Para testes e2e:
-
-```bash
-TEST_DATABASE_URL=postgresql://user:password@localhost:5432/sistema_loja_test
-TEST_DB_SSL=false
-```
-
-## Executar localmente
-
-```bash
-npm install
+npm ci
 npm run migration:run
 npm run start:dev
 ```
 
-API local: `http://localhost:3000`
+API local em http://localhost:3000. Consulte GET /products para verificar acesso ao catálogo; não há endpoint de health dedicado implementado.
 
-Health check: `GET /`
-
-## Migrations
-
-O projeto usa migrations versionadas (`synchronize=false`).
+## Qualidade
 
 ```bash
-npm run migration:run
-npm run migration:revert
-npm run migration:show
+npm run lint
+npm test -- --runInBand
+npm run build
 ```
 
-## Testes
+E2E: npm run test:e2e, somente após preparar PostgreSQL local descartável. Exige TEST_DATABASE_URL apontando para banco com sufixo _test e TEST_DATABASE_ISOLATED=true. O setup não carrega .env, força SSL desativado para loopback e gera senha administrativa efêmera. As tabelas são truncadas entre testes. O CI cria o PostgreSQL temporário automaticamente e não aceita pular E2E por ausência de secret.
 
-Unitários:
+Migrations são explícitas: migration:run, migration:show e migration:revert. synchronize e migrationsRun permanecem desativados. Não executar estes comandos no banco publicado nesta etapa.
 
-```bash
-npm test
-```
+## Contrato administrativo
 
-E2E (fluxo de venda ponta a ponta com banco de teste):
-
-```bash
-npm run test:e2e
-```
-
-## Deploy (Render)
-
-Configuração recomendada:
-
-- Root Directory: `backend`
-- Build Command: `npm ci && npm run build`
-- Start Command: `npm run start:prod`
-- Variáveis: `DATABASE_URL`, `DB_SSL`, `CORS_ORIGIN`, `ADMIN_PASSWORD`
+PATCH /products/:id e PATCH /products/:id/price recebem adminPassword junto aos campos alterados. DELETE /products/:id recebe somente a confirmação. POST /products/validate-password recebe password e retorna valid, sem conceder sessão; a operação final confere novamente a senha. Ausência de configuração retorna 503 genérico; senha incorreta, 403; DTO inválido, 400; conflito de código de barras, 409.
