@@ -1,15 +1,22 @@
-import { config } from 'dotenv';
-import { resolve } from 'path';
-
-config({ path: resolve(process.cwd(), '.env') });
-
-// Guarantee test DB env is ready before AppModule/TypeORM loads in e2e specs.
-if (process.env.TEST_DATABASE_URL) {
-  process.env.DATABASE_URL = process.env.TEST_DATABASE_URL;
+import { randomBytes } from 'node:crypto';
+// Executado antes de carregar AppModule/DataSource. Nunca lê .env da aplicação.
+const raw = process.env.TEST_DATABASE_URL;
+if (!raw || process.env.TEST_DATABASE_ISOLATED !== 'true') {
+  throw new Error(
+    'E2E exige PostgreSQL descartável, TEST_DATABASE_URL e TEST_DATABASE_ISOLATED=true.',
+  );
 }
-
-if (process.env.TEST_DB_SSL) {
-  process.env.DB_SSL = process.env.TEST_DB_SSL;
+const url = new URL(raw);
+if (
+  !['localhost', '127.0.0.1', '[::1]'].includes(url.hostname) ||
+  !url.pathname.endsWith('_test')
+) {
+  throw new Error(
+    'E2E aceita somente banco local com nome terminado em _test.',
+  );
 }
-
+process.env.DATABASE_URL = raw;
+process.env.DB_SSL = 'false';
 process.env.NODE_ENV = 'test';
+// Credencial efêmera somente do teste; não é senha padrão da aplicação.
+process.env.ADMIN_PASSWORD = randomBytes(32).toString('hex');

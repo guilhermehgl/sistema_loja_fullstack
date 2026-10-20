@@ -83,8 +83,13 @@ export class ProductsService {
       );
   }
 
-  updateProduct(product: Product) {
-    return this.http.patch<Product>(`${this.API}/${product.id}`, product)
+  updateProduct(product: Product, adminPassword: string, original: Product) {
+    const changes = Object.fromEntries(
+      (['name', 'barcode', 'quantity', 'price'] as const)
+        .filter(key => product[key] !== original[key])
+        .map(key => [key, product[key]])
+    );
+    return this.http.patch<Product>(`${this.API}/${product.id}`, { ...changes, adminPassword })
       .pipe(
         catchError((error) => throwError(() => new Error(getApiErrorMessage(error, 'Erro ao atualizar produto.')))),
         tap(() => this.load()),

@@ -50,6 +50,7 @@ export class ProductsListComponent implements OnInit, OnDestroy {
   // Estado unificado de ação
   confirmAction?: ConfirmAction;
   productTarget?: Product;
+  private adminPassword = '';
 
   constructor(private service: ProductsService, private cdr: ChangeDetectorRef) {}
 
@@ -86,6 +87,7 @@ export class ProductsListComponent implements OnInit, OnDestroy {
 
   // 🔑 Abrir modal de confirmação de senha para delete ou edit
   openConfirmModal(product: Product, action: ConfirmAction) {
+    this.adminPassword = '';
     this.productTarget = product;
     this.confirmAction = action;
     this.showConfirmModal = true;
@@ -109,6 +111,7 @@ export class ProductsListComponent implements OnInit, OnDestroy {
         if (this.confirmAction === 'delete') {
           this.executeDelete(password);
         } else if (this.confirmAction === 'edit') {
+          this.adminPassword = password;
           this.showEditModal = true;
           this.cdr.detectChanges();
         }
@@ -147,13 +150,15 @@ export class ProductsListComponent implements OnInit, OnDestroy {
 
   // 🔄 Atualiza produto após edição
   updateProduct(updated: Product) {
-    this.service.updateProduct(updated).subscribe({
+    if (!this.productTarget) return;
+    this.service.updateProduct(updated, this.adminPassword, this.productTarget).subscribe({
       next: () => {
         const index = this.products.findIndex(p => p.id === updated.id);
         if (index !== -1) this.products[index] = updated;
 
         this.applyFilters();
         this.showEditModal = false;
+        this.adminPassword = '';
 
         this.setFeedback('Produto atualizado com sucesso.', 'success');
 
@@ -196,7 +201,15 @@ export class ProductsListComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
+    this.adminPassword = '';
     this.subscriptions.unsubscribe();
+  }
+
+  cancelEdit() {
+    this.showEditModal = false;
+    this.adminPassword = '';
+    this.productTarget = undefined;
+    this.confirmAction = undefined;
   }
 
   retryLoad() {

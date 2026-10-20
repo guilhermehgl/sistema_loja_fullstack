@@ -66,7 +66,7 @@ Configuração recomendada:
 
 - Root Directory: `frontend`
 - Build Command: `npm run build`
-- Output Directory:
-  - Angular: `dist/frontend/browser`
-  - Se o projeto estiver configurado com Vite: `dist`
+- Output Directory: `dist/frontend/browser`
 - Variável obrigatória: `FRONTEND_API_URL_PROD`
+
+Edição e exclusão exigem confirmação administrativa no backend. A senha fica somente em memória durante a edição; o PATCH envia apenas campos alterados. Não publicar este frontend como prova de compatibilidade do backend antigo. Testes: npm test -- --watch=false.

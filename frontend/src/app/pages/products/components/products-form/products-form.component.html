@@ -4,7 +4,8 @@
     <div class="form-grid">
 
       <div class="input-container">
-        <input class="input" type="text" formControlName="name" placeholder="Nome do produto" />
+        <label for="product-name">Nome do produto</label>
+        <input id="product-name" class="input" type="text" formControlName="name" placeholder="Nome do produto" />
 
         <small class="form-error" *ngIf="hasError('name', 'required')">
           Nome é obrigatório
@@ -18,13 +19,14 @@
           Nome deve ter no máximo 30 caracteres
         </small>
 
-        <small class="form-error" *ngIf="formHasError('nameRequired')">
+        <small class="form-error" *ngIf="formHasError('nameRequired') && !hasError('name', 'required')">
           Nome é obrigatório para código novo
         </small>
       </div>
 
       <div class="input-container">
-        <input class="input" type="text" formControlName="barcode" placeholder="Código (8 dígitos)" maxlength="8"
+        <label for="product-barcode">Código (8 dígitos)</label>
+        <input id="product-barcode" class="input" type="text" formControlName="barcode" placeholder="Código (8 dígitos)" maxlength="8"
           inputmode="numeric" (input)="onlyNumbers($event, 8)" />
 
         <small class="form-error" *ngIf="hasError('barcode', 'required')">
@@ -37,7 +39,8 @@
       </div>
 
       <div class="input-container">
-        <input class="input" type="text" formControlName="quantity" placeholder="Quantidade" maxlength="6"
+        <label for="product-quantity">Quantidade</label>
+        <input id="product-quantity" class="input" type="text" formControlName="quantity" placeholder="Quantidade" maxlength="6"
           inputmode="numeric" (input)="quantityMask($event)" />
 
         <small class="form-error" *ngIf="hasError('quantity', 'required')">
@@ -50,7 +53,8 @@
       </div>
 
       <div class="input-container">
-        <input class="input" type="text" formControlName="price" placeholder="Preço (ex: 10,50)" maxlength="10"
+        <label for="product-price">Preço (R$)</label>
+        <input id="product-price" class="input" type="text" formControlName="price" placeholder="Preço (ex: 10,50)" maxlength="10"
           (input)="priceMask($event)" (blur)="normalizePrice()" />
 
         <small class="form-error" *ngIf="hasError('price', 'required')">

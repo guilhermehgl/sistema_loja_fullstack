@@ -1,176 +1,105 @@
 # Sistema Loja Fullstack
 
-Sistema fullstack de gestão de estoque e vendas com controle transacional, arquitetura em camadas e deploy em produção.
+Gestão de produtos, estoque e vendas com **Angular, NestJS, TypeScript, PostgreSQL e TypeORM**. Projeto existente aprimorado para portfólio, preservando a interface e o fluxo de trabalho.
 
-![Frontend - Vercel](https://img.shields.io/badge/Frontend-Vercel-000?style=for-the-badge&logo=vercel)
-![Backend - Render](https://img.shields.io/badge/Backend-Render-46E3B7?style=for-the-badge&logo=render&logoColor=000)
-![Database - Neon](https://img.shields.io/badge/Database-Neon-00E599?style=for-the-badge&logo=postgresql&logoColor=000)
+**[Abrir demonstração online](https://sistema-loja-fullstack.vercel.app/)**
 
-## Acesse o Projeto
+![Cadastro, listagem e venda de produtos](docs/resumo.gif)
 
- https://sistema-loja-fullstack.vercel.app/
+O GIF registra a interface existente. A demonstração hospedada pode estar em uma revisão anterior às correções deste PR; build/CI não substituem a validação do código publicado. A API gratuita pode demorar ao despertar. Use apenas dados fictícios; a confirmação administrativa não é um acesso público divulgado aqui.
 
-## Demonstração
+## Problema resolvido e funcionalidades
 
-![Preview do sistema](./docs/resumo.gif)
+O sistema organiza o cadastro e a reposição por código de barras, permite pesquisar/ordenar/paginar produtos e registra vendas com baixa de estoque. A venda utiliza preço do servidor e precisa ser inteiramente concluída ou revertida quando um item falha.
 
-## Sobre o Projeto
+- Cadastro e reposição: um código existente soma quantidade e atualiza preço, preservando o nome.
+- Edição parcial e exclusão com confirmação administrativa no backend.
+- Carrinho com limites visuais de estoque; a decisão final é sempre do servidor.
+- Formulários e modais com validação e estados de carregamento, erro, vazio e sucesso.
 
-Este projeto demonstra uma aplicação fullstack com foco em consistência de dados, organização em camadas e práticas utilizadas em ambientes reais de produção.
+## Tecnologias e arquitetura
 
-## Funcionalidades
-
-- Cadastro de produtos
-- Atualização e remoção de produtos
-- Busca, ordenação e paginação
-- Modal de venda com controle de estoque
-- Mensagens amigáveis de loading, erro, vazio e sucesso
-
-## Problema Resolvido
-
-Aplicações simples de CRUD não tratam corretamente cenários como controle de estoque durante vendas simultâneas.
-Este projeto implementa um fluxo de venda que garante consistência dos dados e evita inconsistências no estoque.
-Esse tipo de abordagem é essencial em sistemas reais de e-commerce e gestão de estoque.
-
-## Destaques Técnicos
-
-- Controle de estoque com consistência de dados utilizando operações transacionais
-- Banco PostgreSQL com migrations versionadas (pronto para produção)
-- Estrutura preparada para ambiente de produção com controle de ambiente via variáveis (.env)
-- Arquitetura backend modular com NestJS e separação por responsabilidades
-- Tratamento centralizado de erros no frontend e backend
-- Deploy completo em ambiente cloud (Vercel + Render + Neon)
-
-## Qualidade e Confiabilidade (E2E)
-
-O backend possui suíte de testes end-to-end cobrindo o fluxo crítico de negócio: venda com baixa de estoque.
-
-- Cenário de sucesso ponta a ponta: cria produto, efetua venda e valida a persistência no banco com estoque atualizado
-- Cenário de proteção de regra de negócio: bloqueia venda com estoque insuficiente e retorna erro de domínio
-- Isolamento entre testes com limpeza de tabelas (`TRUNCATE ... RESTART IDENTITY CASCADE`) para eliminar flakiness
-- Ambiente de teste dedicado via `TEST_DATABASE_URL` e `TEST_DB_SSL`, sem acoplamento ao ambiente de desenvolvimento
-- Execução de migrations no setup e2e, garantindo alinhamento com esquema real de produção
-
-Esse desenho reduz risco de regressão em operações transacionais e evidencia uma abordagem orientada a confiabilidade, não apenas cobertura superficial de endpoints.
-
-## Arquitetura (Visão Geral)
+| Camada | Tecnologias |
+| --- | --- |
+| Interface | Angular 21, TypeScript, formulários reativos, RxJS e SCSS |
+| API REST | NestJS 11, TypeORM e class-validator |
+| Banco | PostgreSQL, migrations versionadas e código de barras único |
+| Qualidade | Jest, Supertest, Vitest e GitHub Actions |
+| Hospedagem existente | Vercel (frontend), Render (API) e Neon (banco) |
 
 ```mermaid
 flowchart LR
-  U["Usuário"] --> F["Frontend (Angular/Vercel)"]
-  F --> B["Backend API (NestJS/Render)"]
-  B --> D["PostgreSQL (Neon)"]
+  A[Angular] -->|REST| B[NestJS: controllers e DTOs]
+  B --> C[Serviços de produtos e vendas]
+  C --> D[(PostgreSQL / TypeORM)]
 ```
 
-## Executar Localmente
+## Decisões técnicas
 
-### Requisitos
+- **Vendas concorrentes:** a transação usa `SELECT FOR UPDATE` pelo mesmo gerenciador antes de conferir cada saldo. Produtos repetidos são consolidados e os bloqueios seguem ordem de ID, reduzindo deadlocks. Falha em qualquer item reverte saldos, venda e itens.
+- **Reposição concorrente:** `INSERT ... ON CONFLICT` soma a quantidade no PostgreSQL, inclusive quando dois cadastros do mesmo código chegam juntos. O preço da última reposição processada prevalece.
+- **Confirmação administrativa:** edição, preço e exclusão exigem `adminPassword` na própria requisição. Configuração ausente/vazia falha de forma controlada; confirmar a senha pela interface não libera endpoints desprotegidos. A senha só fica em memória durante a edição e não é salva no navegador.
+- **Validação:** DTOs reais no cadastro e na atualização parcial, código com oito dígitos numéricos e conflito de código retornando 409. Aplicação e E2E compartilham o mesmo ValidationPipe.
+- **Persistência:** `synchronize=false`; migrations são executadas explicitamente. Preço é armazenado como numeric e as vendas guardam seu preço por item.
 
-- Node.js 22+
-- npm 10+
-- PostgreSQL local ou Neon
+A confirmação por senha compartilhada **não é um sistema de login, identidade de usuário ou autorização empresarial completa**. Não há JWT, sessões ou perfis. A edição manual da quantidade define um saldo absoluto; não é uma operação de reposição. Remover produto pode remover seus itens históricos por cascade, conforme o modelo existente. Estes limites permanecem explícitos.
 
-### Passo a passo
+## Testes e CI
 
-1. Clonar repositório
+```bash
+npm --prefix backend run lint
+npm --prefix backend test -- --runInBand
+npm --prefix backend run build
+npm --prefix frontend test -- --watch=false
+npm --prefix frontend run build
+```
+
+Os E2E cobrem venda, estoque insuficiente, duas vendas sobrepostas pela última unidade, múltiplos produtos em ordem inversa, rollback, produtos repetidos, reposição concorrente, confirmação administrativa, DTOs e conflito de código. A concorrência usa PostgreSQL real; mocks não certificam bloqueios de banco. O teste frontend confere a confirmação e o envio somente dos campos editados, preservando estoque atualizado por outra operação.
+
+O [CI](.github/workflows/ci.yml) executa lint sem correção automática, testes unitários, E2E obrigatórios e builds. O job cria PostgreSQL 17 descartável, executa migrations e termina com o runner, sem secrets ou banco remoto. O frontend executa Vitest e build Angular. Consulte o resultado de cada commit no [GitHub Actions](https://github.com/guilhermehgl/sistema_loja_fullstack/actions); esta documentação descreve os cenários implementados, não certifica um deploy futuro.
+
+**E2E apagam as tabelas do banco de teste com TRUNCATE.** Só execute em PostgreSQL criado exclusivamente para testes destrutivos. O runner exige conexão loopback, nome terminado em `_test` e confirmação explícita `TEST_DATABASE_ISOLATED=true`; esses controles não transformam um banco existente em descartável. Nunca use Neon ou a URI publicada.
+
+## Executar localmente
+
+Requisitos: Node.js 22.12+ ou 24, npm e PostgreSQL local. Não use o banco publicado.
 
 ```bash
 git clone https://github.com/guilhermehgl/sistema_loja_fullstack.git
 cd sistema_loja_fullstack
+npm --prefix backend ci
+npm --prefix frontend ci
 ```
 
-2. Configurar variáveis de ambiente
-
-```bash
-# backend/.env
-PORT=3000
-DATABASE_URL=postgresql://user:password@localhost:5432/sistema_loja
-DB_SSL=false
-ADMIN_PASSWORD=1234
-CORS_ORIGIN=http://localhost:4200
-
-# frontend/.env
-FRONTEND_API_URL=http://localhost:3000
-FRONTEND_API_URL_PROD=https://seu-backend.onrender.com
-```
-
-3. Subir backend
+Copie `backend/.env.example` e `frontend/.env.example` para os respectivos `.env`, preservando arquivos existentes. No backend, configure `DATABASE_URL` para seu banco local, `DB_SSL=false`, `CORS_ORIGIN=http://localhost:4200` e uma senha administrativa própria em `ADMIN_PASSWORD`. Não há senha padrão. No frontend use `FRONTEND_API_URL=http://localhost:3000`.
 
 ```bash
 cd backend
-npm install
 npm run migration:run
 npm run start:dev
+# Em outro terminal, dentro de frontend:
+npm start
 ```
 
-4. Subir frontend (novo terminal)
+Frontend: `http://localhost:4200`; API: `http://localhost:3000`.
 
-```bash
-cd frontend
-npm install
-npm run start
-```
+Para E2E locais, prepare outro banco vazio e descartável chamado `sistema_loja_test`. Defina `TEST_DATABASE_URL` somente para ele e `TEST_DATABASE_ISOLATED=true`, então execute `npm --prefix backend run test:e2e`. O setup não lê o .env da aplicação e gera confirmação administrativa efêmera. O CI já prepara esse ambiente automaticamente.
 
-### Acessos locais
+## API e publicação
 
-- Frontend: `http://localhost:4200`
-- Backend: `http://localhost:3000`
+| Método | Endpoint | Operação |
+| --- | --- | --- |
+| GET / POST | `/products` | Listar / cadastrar ou repor |
+| PATCH | `/products/:id` | Editar campos enviados + adminPassword |
+| PATCH | `/products/:id/price` | Alterar price + adminPassword |
+| DELETE | `/products/:id` | Excluir com adminPassword |
+| POST | `/products/validate-password` | Conferir password; não cria sessão |
+| POST | `/orders` | Registrar venda com items: productId e quantity |
 
-## Deploy
+[Backend](backend/README.md) · [Frontend](frontend/README.md) · [Deploy](DEPLOY.md)
 
-- Frontend: [https://sistema-loja-fullstack.vercel.app/](https://sistema-loja-fullstack.vercel.app/)
-- Backend: [https://sistema-loja-fullstack.onrender.com](https://sistema-loja-fullstack.onrender.com)
-- Banco: PostgreSQL hospedado no Neon
-
-## API (Principais Endpoints)
-
-| Método | Rota | Descrição |
-|---|---|---|
-| GET | /produtos | Lista produtos |
-| POST | /produtos | Cria produto |
-| PUT | /produtos/:id | Atualiza produto |
-| DELETE | /produtos/:id | Remove produto |
-| POST | /vendas | Registra venda |
-
-## Documentação Técnica por Camada
-
-Para detalhes técnicos completos, consulte:
-
-- Frontend: [frontend/README.md](./frontend/README.md)
-- Backend: [backend/README.md](./backend/README.md)
-
-## CI/CD com GitHub Actions
-
-Este repositório possui pipelines separados para garantir qualidade contínua e deploy automatizado:
-
-- CI (`.github/workflows/ci.yml`)
-- Executa em `pull_request` para `main` e em `push` para `main`/`develop`
-- Backend: `lint`, testes unitários e `build`
-- Frontend: `build`
-- E2E backend opcional: roda apenas se `TEST_DATABASE_URL` estiver configurado em `GitHub Secrets`
-
-- CD (`.github/workflows/cd.yml`)
-- Executa após CI bem-sucedido na branch `main` (ou manualmente via `workflow_dispatch`)
-- Dispara deploy por webhook para Render e Vercel
-
-### Secrets necessários
-
-No GitHub, adicione em `Settings > Secrets and variables > Actions`:
-
-- `TEST_DATABASE_URL` (opcional, habilita job de e2e)
-- `TEST_DB_SSL` (opcional, ex: `true`)
-- `RENDER_DEPLOY_HOOK_URL` (opcional, habilita deploy backend)
-- `VERCEL_DEPLOY_HOOK_URL` (opcional, habilita deploy frontend)
-
-Se os hooks de deploy não estiverem configurados, o workflow de CD finaliza sem erro e apenas informa no sumário que os hooks estão ausentes.
-
-## Melhorias Futuras
-
-- Autenticação e autorização com JWT
-- Dashboard com métricas de vendas e estoque
+Não existe workflow de CD neste repositório. As integrações externas de Vercel/Render possuem automações próprias; push pode criar preview e merge na main pode publicar produção. Alterações do contrato administrativo exigem frontend e backend compatíveis. Publicação definitiva e merge dependem de autorização separada; este PR não executa migrations remotas nem deploy manual.
 
 ## Autor
 
-Guilherme Henrique Guimarães Lima
-
-- GitHub: [@guilhermehgl](https://github.com/guilhermehgl)
+[Guilherme Henrique Guimarães Lima](https://github.com/guilhermehgl)

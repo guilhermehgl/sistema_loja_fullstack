@@ -1,3 +1,4 @@
+import { join } from 'path';
 import { TypeOrmModuleOptions } from '@nestjs/typeorm';
 import { DataSourceOptions } from 'typeorm';
 import { OrderItem } from '../orders/order-item.entity';
@@ -16,9 +17,9 @@ export function buildTypeOrmOptions(): TypeOrmModuleOptions {
         ssl: shouldUseSsl ? { rejectUnauthorized: false } : false,
         entities: [Product, Order, OrderItem],
         synchronize: false,
-        logging: !isProduction,
+        logging: !isProduction && process.env.NODE_ENV !== 'test',
         migrationsRun: false,
-        migrations: ['dist/src/database/migrations/*.js'],
+        migrations: [join(__dirname, 'migrations', '*{.ts,.js}')],
       }
     : {
         type: 'postgres',
@@ -30,9 +31,9 @@ export function buildTypeOrmOptions(): TypeOrmModuleOptions {
         ssl: shouldUseSsl ? { rejectUnauthorized: false } : false,
         entities: [Product, Order, OrderItem],
         synchronize: false,
-        logging: !isProduction,
+        logging: !isProduction && process.env.NODE_ENV !== 'test',
         migrationsRun: false,
-        migrations: ['dist/src/database/migrations/*.js'],
+        migrations: [join(__dirname, 'migrations', '*{.ts,.js}')],
       };
 }
 

@@ -1,37 +1,19 @@
-# Deploy (Vercel + Render + Neon)
+# Publicação — Vercel, Render e Neon
 
-## 1) Banco (Neon)
-1. Crie um projeto Postgres no Neon.
-2. Copie a connection string (`DATABASE_URL`).
+A demonstração existente está em https://sistema-loja-fullstack.vercel.app/ e usa a API https://sistema-loja-fullstack.onrender.com. A presença desses serviços não certifica que o código deste PR já esteja publicado.
 
-## 2) Backend (Render)
-1. No Render, crie um `Web Service` apontando para este repositório.
-2. Configure `Root Directory` como `backend`.
-3. `Build Command`: `npm ci && npm run build`
-4. `Start Command`: `npm run start:prod`
-5. Variáveis de ambiente:
-   - `DATABASE_URL` = string do Neon
-   - `DB_SSL` = `true`
-   - `ADMIN_PASSWORD` = senha administrativa
-   - `CORS_ORIGIN` = URL do frontend na Vercel (ex: `https://meu-app.vercel.app`)
-6. Deploy.
+## Compatibilidade e aprovação
 
-Opcional: usar o [render.yaml](/C:/Users/guilherme.guimaraes/Desktop/sistema_loja_fullstack/render.yaml) para blueprint.
+Esta revisão preserva o esquema PostgreSQL e não acrescenta migrations. O frontend novo envia adminPassword nas alterações; o backend novo passa a exigir esse campo. Publicar o backend sozinho interrompe a edição pelo frontend antigo. A publicação precisa coordenar as duas versões e requer autorização própria. Não há deploy manual, mudança de configuração externa ou operação de banco nesta tarefa.
 
-## 3) Frontend (Vercel)
-1. No Vercel, importe o repositório com `Root Directory` = `frontend`.
-2. Framework preset: `Other` (build Angular manual) ou `Angular` se detectado automaticamente.
-3. Build command: `npm run build`
-4. Output directory: `dist/frontend/browser`
-5. Configure variável de ambiente no Vercel:
-   - `FRONTEND_API_URL_PROD` = URL do backend Render (ex: `https://meu-backend.onrender.com`)
-6. Deploy.
+O workflow [ci.yml](.github/workflows/ci.yml) só valida código, com PostgreSQL descartável para E2E. Não existe cd.yml. Integrações externas podem criar previews por push/PR e produção por merge; conferir branches e efeitos antes de publicar. Não inserir deploy hooks em documentação.
 
-O arquivo [vercel.json](/C:/Users/guilherme.guimaraes/Desktop/sistema_loja_fullstack/frontend/vercel.json) já está configurado para fallback de rotas SPA.
+## Configuração de referência para futura publicação autorizada
 
-Para desenvolvimento local, copie [frontend/.env.example](/C:/Users/guilherme.guimaraes/Desktop/sistema_loja_fullstack/frontend/.env.example) para `.env` dentro de `frontend`.
+- Render: raiz backend, build npm ci && npm run build; start npm run start:prod. Manter DATABASE_URL, DB_SSL, CORS_ORIGIN e ADMIN_PASSWORD no ambiente seguro do serviço. Não há senha administrativa padrão.
+- Vercel: raiz frontend, build npm run build, saída dist/frontend/browser. FRONTEND_API_URL_PROD precisa apontar para a API compatível e é incorporada no build. [Fallback SPA](frontend/vercel.json).
+- Neon: preservar banco e migrations existentes. Alterações de schema/dados exigem aprovação separada; nunca configurar TEST_DATABASE_URL com conexão publicada.
 
-## 4) Checklist final
-- Backend responde em `https://SEU-BACKEND.onrender.com/products`.
-- Frontend abre sem erro de CORS.
-- Operações de produto/venda persistem no Neon.
+[Blueprint de referência](render.yaml) · [Variáveis locais frontend](frontend/.env.example)
+
+Antes de anunciar uma nova versão, conferir o CI do SHA, logs, catálogo, confirmações administrativas e fluxo completo em dados de teste autorizados. O preview frontend pode usar a API antiga: isso não certifica o novo backend. Rollback deve manter os dois contratos compatíveis, sem enfraquecer a confirmação administrativa.
