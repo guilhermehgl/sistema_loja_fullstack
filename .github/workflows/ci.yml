@@ -1,105 +1,61 @@
 name: CI
-
 on:
   pull_request:
     branches: [main]
   push:
-    branches: [main, develop]
-
+    branches: [main, develop, 'portfolio/**']
 concurrency:
   group: ci-${{ github.ref }}
   cancel-in-progress: true
-
 jobs:
   backend:
-    name: Backend (lint, test, build)
+    name: Backend e PostgreSQL isolado
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: backend
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 22
-          cache: npm
-          cache-dependency-path: backend/package-lock.json
-
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Lint
-        run: npm run lint
-
-      - name: Unit tests
-        run: npm test -- --runInBand
-
-      - name: Build
-        run: npm run build
-
-  backend-e2e:
-    name: Backend E2E (optional)
-    runs-on: ubuntu-latest
-    needs: backend
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_USER: loja_ci
+          POSTGRES_PASSWORD: temporary_ci_only
+          POSTGRES_DB: sistema_loja_test
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd "pg_isready -U loja_ci -d sistema_loja_test"
+          --health-interval 5s --health-timeout 5s --health-retries 10
     defaults:
       run:
         working-directory: backend
     env:
-      TEST_DATABASE_URL: ${{ secrets.TEST_DATABASE_URL }}
-      TEST_DB_SSL: ${{ secrets.TEST_DB_SSL }}
-
+      TEST_DATABASE_URL: postgresql://loja_ci:temporary_ci_only@127.0.0.1:5432/sistema_loja_test
+      TEST_DATABASE_ISOLATED: 'true'
     steps:
-      - name: Skip e2e when TEST_DATABASE_URL is not configured
-        if: ${{ env.TEST_DATABASE_URL == '' }}
-        run: echo "TEST_DATABASE_URL not configured. Skipping e2e tests."
-
-      - name: Checkout
-        if: ${{ env.TEST_DATABASE_URL != '' }}
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        if: ${{ env.TEST_DATABASE_URL != '' }}
-        uses: actions/setup-node@v4
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
         with:
           node-version: 22
           cache: npm
           cache-dependency-path: backend/package-lock.json
-
-      - name: Install dependencies
-        if: ${{ env.TEST_DATABASE_URL != '' }}
-        run: npm ci
-
-      - name: Run e2e tests
-        if: ${{ env.TEST_DATABASE_URL != '' }}
-        run: npm run test:e2e
-
+      - run: npm ci
+      - run: npm run lint
+      - run: npm test -- --runInBand
+      - run: npm run test:e2e
+      - run: npm run build
   frontend:
-    name: Frontend (build)
+    name: Frontend testes e build
     runs-on: ubuntu-latest
     defaults:
       run:
         working-directory: frontend
-
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
         with:
           node-version: 22
           cache: npm
           cache-dependency-path: frontend/package-lock.json
-
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Build
+      - run: npm ci
+      - run: npm test -- --watch=false
+      - run: npm run build
         env:
           FRONTEND_API_URL: http://localhost:3000
           FRONTEND_API_URL_PROD: https://sistema-loja-fullstack.onrender.com
-        run: npm run build
