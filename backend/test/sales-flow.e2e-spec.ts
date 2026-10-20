@@ -33,7 +33,8 @@ describe('Produtos e vendas com PostgreSQL descartável', () => {
     }).compile();
     app = module.createNestApplication();
     app.useGlobalPipes(createValidationPipe());
-    await app.init();
+    // Um listener estável evita que Supertest feche o servidor entre requests paralelos.
+    await app.listen(0, '127.0.0.1');
   });
   beforeEach(async () => {
     process.env.ADMIN_PASSWORD = password;
