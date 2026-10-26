@@ -6,7 +6,7 @@ Gestão de produtos, estoque e vendas com **Angular, NestJS, TypeScript, Postgre
 
 ![Cadastro, listagem e venda de produtos](docs/resumo.gif)
 
-O GIF registra a interface existente. A demonstração hospedada pode estar em uma revisão anterior às correções deste PR; build/CI não substituem a validação do código publicado. A API gratuita pode demorar ao despertar. Use apenas dados fictícios; a confirmação administrativa não é um acesso público divulgado aqui.
+O GIF registra a interface existente. Em 26/10/2026, Vercel e Render foram conferidos no commit `603eb0e`, após o merge do PR #3, com CI da main aprovado. A demonstração foi verificada em desktop e mobile; o produto fictício do teste anterior permanece editado, com saldo final de duas unidades. A API gratuita pode demorar ao despertar. Use apenas dados fictícios; a confirmação administrativa não é um acesso público divulgado aqui.
 
 ## Problema resolvido e funcionalidades
 
@@ -98,7 +98,7 @@ Para E2E locais, prepare outro banco vazio e descartável chamado `sistema_loja_
 
 [Backend](backend/README.md) · [Frontend](frontend/README.md) · [Deploy](DEPLOY.md)
 
-Não existe workflow de CD neste repositório. As integrações externas de Vercel/Render possuem automações próprias; push pode criar preview e merge na main pode publicar produção. Alterações do contrato administrativo exigem frontend e backend compatíveis. Publicação definitiva e merge dependem de autorização separada; este PR não executa migrations remotas nem deploy manual.
+Não existe workflow de CD neste repositório. As integrações externas de Vercel/Render possuem automações próprias; push pode criar preview e merge na main pode publicar produção. Alterações do contrato administrativo exigem frontend e backend compatíveis. O PR #3 foi integrado e suas versões compatíveis estão publicadas. Novas publicações ou alterações de infraestrutura continuam sujeitas à autorização; o encerramento documental não executa migrations remotas nem deploy manual.
 
 ## Autor
 
